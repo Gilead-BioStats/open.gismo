@@ -3,7 +3,6 @@ meta:
   ID: AE
   Description: "Map raw adverse event data"
   Priority: 1
-  GroupLevel: Subject
 spec:
   Raw_AE:
     SubjectID:
@@ -14,6 +13,7 @@ spec:
       type: character
 steps:
   - output: Mapped_AE
-    name: gsm.mapping::AE_Map_Raw
+    name: "="
     params:
-      dfInput: Raw_AE
+      lhs: Mapped_AE
+      rhs: Raw_AE

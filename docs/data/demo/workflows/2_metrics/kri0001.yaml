@@ -29,11 +29,8 @@ steps:
       dfNumerator: Mapped_AE
       strSubjectCol: SubjectID
       strGroupCol: SiteID
+      strGroupLevel: GroupLevel
   - output: Analysis_Summary
-    name: gsm.core::Analyze_NormalApprox
+    name: gsm.core::Summarize
     params:
-      dfInput: Analysis_Input
-  - output: Analysis_Flagged
-    name: gsm.core::Flag_NormalApprox
-    params:
-      dfAnalyzed: Analysis_Summary
+      dfFlagged: Analysis_Input

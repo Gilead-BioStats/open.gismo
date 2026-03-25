@@ -1,6 +1,0 @@
-org,package,version,repository,url,sha
-Gilead-BioStats,gsm.core,2.2.0,https://github.com/Gilead-BioStats/gsm.core,https://github.com/Gilead-BioStats/gsm.core/archive/v2.2.0.tar.gz,a1b2c3d
-Gilead-BioStats,gsm.mapping,1.5.0,https://github.com/Gilead-BioStats/gsm.mapping,https://github.com/Gilead-BioStats/gsm.mapping/archive/v1.5.0.tar.gz,e4f5g6h
-Gilead-BioStats,gsm.reporting,1.3.0,https://github.com/Gilead-BioStats/gsm.reporting,https://github.com/Gilead-BioStats/gsm.reporting/archive/v1.3.0.tar.gz,i7j8k9l
-OpenRBQM,workr,0.9.0,https://github.com/OpenRBQM/workr,https://github.com/OpenRBQM/workr/archive/v0.9.0.tar.gz,m0n1o2p
-OpenRBQM,open.gismo,0.1.0,https://github.com/OpenRBQM/open.gismo,https://github.com/OpenRBQM/open.gismo/archive/v0.1.0.tar.gz,q3r4s5t
