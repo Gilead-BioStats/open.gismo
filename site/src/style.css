@@ -306,3 +306,64 @@ body {
   padding: 2px; display: flex; align-items: center; opacity: 0.7; transition: opacity 0.15s;
 }
 .card-data-btn:hover { opacity: 1; }
+
+/* ── Enhanced Data Table ───────────────────────────────────────────── */
+.dt-root { display: flex; flex-direction: column; height: 100%; }
+.dt-toolbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.5rem 0; gap: 1rem; flex-wrap: wrap; flex-shrink: 0;
+}
+.dt-toolbar-left { display: flex; align-items: center; gap: 0.75rem; }
+.dt-toolbar-right { display: flex; align-items: center; gap: 0.5rem; }
+.dt-row-count { font-size: 0.8rem; color: var(--text-dim); white-space: nowrap; }
+.dt-search {
+  background: var(--surface); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.6rem; border-radius: 6px; font-size: 0.8rem; outline: none; width: 180px;
+}
+.dt-search:focus { border-color: var(--accent-blue); }
+.dt-page-size {
+  background: var(--surface); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.5rem; border-radius: 6px; font-size: 0.8rem; outline: none;
+}
+.dt-table-wrap { flex: 1; overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
+.dt-table {
+  width: 100%; border-collapse: collapse; font-size: 0.82rem; table-layout: auto;
+}
+.dt-table th {
+  position: sticky; top: 0; z-index: 1;
+  background: var(--surface); text-align: left; padding: 0.5rem 0.75rem;
+  border-bottom: 2px solid var(--border); cursor: pointer; user-select: none; white-space: nowrap;
+}
+.dt-table th:hover { background: rgba(255,255,255,0.05); }
+.dt-th-content { display: flex; align-items: center; gap: 0.35rem; }
+.dt-th-name { font-weight: 600; }
+.dt-type-tag {
+  font-size: 0.65rem; padding: 1px 4px; border-radius: 3px;
+  background: rgba(148,163,184,0.15); color: var(--text-dim); font-weight: 500;
+}
+.dt-sort-icon { font-size: 0.7rem; color: var(--text-dim); margin-left: 2px; }
+.dt-th-dist { margin-top: 4px; line-height: 0; }
+.dist-bar { display: block; }
+.dt-table td {
+  padding: 0.4rem 0.75rem; border-bottom: 1px solid rgba(148,163,184,0.08);
+  white-space: nowrap; max-width: 300px; overflow: hidden; text-overflow: ellipsis;
+}
+.dt-table .dt-num { text-align: right; font-variant-numeric: tabular-nums; font-family: 'SF Mono','Fira Code',monospace; font-size: 0.78rem; }
+.dt-table tr.dt-alt { background: rgba(255,255,255,0.015); }
+.dt-table tbody tr:hover td { background: rgba(56,189,248,0.04); }
+.dt-no-results { text-align: center; color: var(--text-dim); padding: 2rem !important; }
+.dt-empty { color: var(--text-dim); text-align: center; padding: 2rem; }
+.dt-pager {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.5rem 0; flex-shrink: 0;
+}
+.dt-page-info { font-size: 0.78rem; color: var(--text-dim); }
+.dt-page-btns { display: flex; align-items: center; gap: 0.25rem; }
+.dt-pg-btn {
+  background: var(--surface); border: 1px solid var(--border); color: var(--text);
+  padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer;
+  min-width: 28px; text-align: center;
+}
+.dt-pg-btn:hover:not(:disabled) { border-color: var(--accent-blue); color: var(--accent-blue); }
+.dt-pg-btn:disabled { opacity: 0.3; cursor: default; }
+.dt-page-num { font-size: 0.78rem; color: var(--text-dim); padding: 0 0.5rem; }

@@ -10,7 +10,7 @@
 
 import { esc } from './utils.js';
 import { loadArtifact } from './data.js';
-import { buildDataTable } from './artifacts.js';
+import { buildEnhancedTable } from './datatable.js';
 
 /** SVG icons */
 const dataIcon = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>';
@@ -162,7 +162,7 @@ export function buildExplorer(statusData, branch, snapshotId) {
       header.innerHTML = `<span class="explorer-viewer-title">${dataIcon} ${esc(domain)}</span><span class="explorer-viewer-snap">${esc(snapshotId)}</span>`;
       viewer.appendChild(header);
       // Data table
-      const table = buildDataTable(text);
+      const table = buildEnhancedTable(text);
       table.classList.add('explorer-table-wrap');
       viewer.appendChild(table);
     } catch (err) {
