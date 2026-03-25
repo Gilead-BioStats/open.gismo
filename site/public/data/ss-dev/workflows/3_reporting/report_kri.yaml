@@ -1,0 +1,12 @@
+meta:
+  Type: Report
+  ID: report_kri
+  Description: "Generate KRI Summary Report"
+  Priority: 3
+  Output: .html
+steps:
+  - output: KRI_Report
+    name: gsm.reporting::Report_KRI
+    params:
+      dfFlagged: Analysis_Flagged
+      strOutputDir: output

@@ -1,0 +1,78 @@
+name: Nightly Package Snapshot Update
+
+"on":
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+    inputs:
+      branch_name:
+        description: 'Snapshot branch to update (e.g., ss-dev)'
+        required: false
+        type: string
+        default: 'ss-dev'
+
+permissions:
+  contents: write
+
+jobs:
+  nightly-update:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout snapshot branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch_name || 'ss-dev' }}
+          fetch-depth: 0
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: 'release'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev
+
+      - name: Install dependencies
+        run: |
+          Rscript -e '
+            install.packages("pak", repos = "https://r-lib.github.io/p/pak/dev/")
+            pak::pkg_install("OpenRBQM/workr@dev")
+          '
+
+      - name: Update Package Snapshot
+        run: |
+          Rscript -e '
+            library(workr)
+
+            if (file.exists("packages.yaml")) {
+              pkg_config <- yaml::read_yaml("packages.yaml")
+            } else {
+              stop("No packages.yaml found on snapshot branch")
+            }
+
+            pkgSnapshot(
+              path = "snapshot_output",
+              packageList = pkg_config$packages
+            )
+          '
+
+      - name: Commit updated snapshot
+        run: |
+          # Update files in place
+          cp snapshot_output/manifest.csv .
+          [ -f snapshot_output/rproject.toml ] && cp snapshot_output/rproject.toml .
+          [ -d snapshot_output/workflows ] && rm -rf workflows && cp -r snapshot_output/workflows .
+          rm -rf snapshot_output
+
+          # Update snapshot date
+          date -u +%Y-%m-%d > _snapshot_date.txt
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Nightly Package Snapshot update $(date -u +%Y-%m-%d)"
+          git push

@@ -1,0 +1,3 @@
+packages:
+  - OpenRBQM/gsm.mapping@main
+  - OpenRBQM/gsm.core@main

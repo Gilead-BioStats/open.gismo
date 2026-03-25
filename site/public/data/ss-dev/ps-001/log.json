@@ -1,0 +1,109 @@
+{
+  "snapshot_id": "ps-001",
+  "started_at": "2025-11-15T10:30:00Z",
+  "ended_at": "2025-11-15T10:32:45Z",
+  "duration_seconds": 165,
+  "workflows": {
+    "Mapped_AE": {
+      "started_at": "2025-11-15T10:30:02Z",
+      "ended_at": "2025-11-15T10:30:08Z",
+      "duration_seconds": 6,
+      "stdout": "[INFO] Initializing `Mapped_AE` Workflow\n[INFO] Loading data with `lConfig$LoadData`.\n[INFO] Checking data against spec\n[INFO] Workflow Step 1 of 1: `identity`\n[INFO] 150x8 data.frame saved as `lData$Mapped_AE`.\n[INFO] Saving data with `lConfig$SaveData`.\n[INFO] Completed `Mapped_AE` Workflow",
+      "stderr": "",
+      "steps": [
+        {
+          "name": "identity",
+          "started_at": "2025-11-15T10:30:04Z",
+          "ended_at": "2025-11-15T10:30:08Z",
+          "duration_seconds": 4,
+          "stdout": "[INFO] Calling identity\n[INFO] 150x8 data.frame saved as `lData$Mapped_AE`.",
+          "stderr": ""
+        }
+      ]
+    },
+    "Mapped_DM": {
+      "started_at": "2025-11-15T10:30:08Z",
+      "ended_at": "2025-11-15T10:30:14Z",
+      "duration_seconds": 6,
+      "stdout": "[INFO] Initializing `Mapped_DM` Workflow\n[INFO] Loading data with `lConfig$LoadData`.\n[INFO] Checking data against spec\n[INFO] Workflow Step 1 of 1: `identity`\n[INFO] 200x5 data.frame saved as `lData$Mapped_DM`.\n[INFO] Saving data with `lConfig$SaveData`.\n[INFO] Completed `Mapped_DM` Workflow",
+      "stderr": "",
+      "steps": [
+        {
+          "name": "identity",
+          "started_at": "2025-11-15T10:30:10Z",
+          "ended_at": "2025-11-15T10:30:14Z",
+          "duration_seconds": 4,
+          "stdout": "[INFO] Calling identity\n[INFO] 200x5 data.frame saved as `lData$Mapped_DM`.",
+          "stderr": ""
+        }
+      ]
+    },
+    "Analysis_kri0001": {
+      "started_at": "2025-11-15T10:30:15Z",
+      "ended_at": "2025-11-15T10:31:30Z",
+      "duration_seconds": 75,
+      "stdout": "[INFO] Initializing `Analysis_kri0001` Workflow\n[INFO] Loading data with `lConfig$LoadData`.\n[INFO] Checking data against spec\n[INFO] Workflow Step 1 of 2: `gsm.core::Input_Rate`\n[INFO] 50x12 data.frame saved as `lData$Analysis_Input`.\n[INFO] Workflow Step 2 of 2: `gsm.core::Summarize`\n[INFO] 50x8 data.frame saved as `lData$Analysis_Summary`.\n[INFO] Saving data with `lConfig$SaveData`.\n[INFO] Completed `Analysis_kri0001` Workflow",
+      "stderr": "",
+      "steps": [
+        {
+          "name": "gsm.core::Input_Rate",
+          "started_at": "2025-11-15T10:30:18Z",
+          "ended_at": "2025-11-15T10:31:00Z",
+          "duration_seconds": 42,
+          "stdout": "[INFO] Calling gsm.core::Input_Rate\n[INFO] 50x12 data.frame saved as `lData$Analysis_Input`.",
+          "stderr": ""
+        },
+        {
+          "name": "gsm.core::Summarize",
+          "started_at": "2025-11-15T10:31:00Z",
+          "ended_at": "2025-11-15T10:31:30Z",
+          "duration_seconds": 30,
+          "stdout": "[INFO] Calling gsm.core::Summarize\n[INFO] 50x8 data.frame saved as `lData$Analysis_Summary`.",
+          "stderr": ""
+        }
+      ]
+    },
+    "Analysis_kri0002": {
+      "started_at": "2025-11-15T10:31:30Z",
+      "ended_at": "2025-11-15T10:32:30Z",
+      "duration_seconds": 60,
+      "stdout": "[INFO] Initializing `Analysis_kri0002` Workflow\n[INFO] Loading data with `lConfig$LoadData`.\n[INFO] Workflow Step 1 of 2: `gsm.core::Input_Rate`\n[INFO] 50x12 data.frame saved as `lData$Analysis_Input`.\n[INFO] Workflow Step 2 of 2: `gsm.core::Summarize`\n[INFO] 50x8 data.frame saved as `lData$Analysis_Summary`.\n[INFO] Saving data with `lConfig$SaveData`.\n[INFO] Completed `Analysis_kri0002` Workflow",
+      "stderr": "",
+      "steps": [
+        {
+          "name": "gsm.core::Input_Rate",
+          "started_at": "2025-11-15T10:31:33Z",
+          "ended_at": "2025-11-15T10:32:05Z",
+          "duration_seconds": 32,
+          "stdout": "[INFO] Calling gsm.core::Input_Rate\n[INFO] 50x12 data.frame saved as `lData$Analysis_Input`.",
+          "stderr": ""
+        },
+        {
+          "name": "gsm.core::Summarize",
+          "started_at": "2025-11-15T10:32:05Z",
+          "ended_at": "2025-11-15T10:32:30Z",
+          "duration_seconds": 25,
+          "stdout": "[INFO] Calling gsm.core::Summarize\n[INFO] 50x8 data.frame saved as `lData$Analysis_Summary`.",
+          "stderr": ""
+        }
+      ]
+    },
+    "Report_report_kri": {
+      "started_at": "2025-11-15T10:32:30Z",
+      "ended_at": "2025-11-15T10:32:45Z",
+      "duration_seconds": 15,
+      "stdout": "[INFO] Initializing `Report_report_kri` Workflow\n[INFO] Loading data with `lConfig$LoadData`.\n[INFO] Workflow Step 1 of 1: `gsm.kri::report`\n[INFO] Report generated successfully.\n[INFO] Saving data with `lConfig$SaveData`.\n[INFO] Completed `Report_report_kri` Workflow",
+      "stderr": "",
+      "steps": [
+        {
+          "name": "gsm.kri::report",
+          "started_at": "2025-11-15T10:32:32Z",
+          "ended_at": "2025-11-15T10:32:45Z",
+          "duration_seconds": 13,
+          "stdout": "[INFO] Calling gsm.kri::report\n[INFO] Report generated successfully.",
+          "stderr": ""
+        }
+      ]
+    }
+  }
+}

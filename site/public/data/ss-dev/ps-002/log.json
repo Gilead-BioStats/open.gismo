@@ -1,0 +1,100 @@
+{
+  "snapshot_id": "ps-002",
+  "started_at": "2026-01-20T14:00:00Z",
+  "ended_at": "2026-01-20T14:02:18Z",
+  "duration_seconds": 138,
+  "workflows": {
+    "Mapped_AE": {
+      "started_at": "2026-01-20T14:00:02Z",
+      "ended_at": "2026-01-20T14:00:07Z",
+      "duration_seconds": 5,
+      "stdout": "[INFO] Initializing `Mapped_AE` Workflow\n[INFO] Loading data with `lConfig$LoadData`.\n[INFO] Checking data against spec\n[INFO] Workflow Step 1 of 1: `identity`\n[INFO] 180x8 data.frame saved as `lData$Mapped_AE`.\n[INFO] Saving data with `lConfig$SaveData`.\n[INFO] Completed `Mapped_AE` Workflow",
+      "stderr": "",
+      "steps": [
+        {
+          "name": "identity",
+          "started_at": "2026-01-20T14:00:04Z",
+          "ended_at": "2026-01-20T14:00:07Z",
+          "duration_seconds": 3,
+          "stdout": "[INFO] Calling identity\n[INFO] 180x8 data.frame saved as `lData$Mapped_AE`.",
+          "stderr": ""
+        }
+      ]
+    },
+    "Mapped_DM": {
+      "started_at": "2026-01-20T14:00:07Z",
+      "ended_at": "2026-01-20T14:00:12Z",
+      "duration_seconds": 5,
+      "stdout": "[INFO] Initializing `Mapped_DM` Workflow\n[INFO] Loading data with `lConfig$LoadData`.\n[INFO] Workflow Step 1 of 1: `identity`\n[INFO] 210x5 data.frame saved as `lData$Mapped_DM`.\n[INFO] Saving data with `lConfig$SaveData`.\n[INFO] Completed `Mapped_DM` Workflow",
+      "stderr": "",
+      "steps": [
+        {
+          "name": "identity",
+          "started_at": "2026-01-20T14:00:09Z",
+          "ended_at": "2026-01-20T14:00:12Z",
+          "duration_seconds": 3,
+          "stdout": "[INFO] Calling identity\n[INFO] 210x5 data.frame saved as `lData$Mapped_DM`.",
+          "stderr": ""
+        }
+      ]
+    },
+    "Analysis_kri0001": {
+      "started_at": "2026-01-20T14:00:13Z",
+      "ended_at": "2026-01-20T14:01:20Z",
+      "duration_seconds": 67,
+      "stdout": "[INFO] Initializing `Analysis_kri0001` Workflow\n[INFO] Loading data with `lConfig$LoadData`.\n[INFO] Checking data against spec\n[INFO] Workflow Step 1 of 2: `gsm.core::Input_Rate`\n[INFO] 55x12 data.frame saved as `lData$Analysis_Input`.\n[INFO] Workflow Step 2 of 2: `gsm.core::Summarize`\n[INFO] 55x8 data.frame saved as `lData$Analysis_Summary`.\n[INFO] Saving data with `lConfig$SaveData`.\n[INFO] Completed `Analysis_kri0001` Workflow",
+      "stderr": "",
+      "steps": [
+        {
+          "name": "gsm.core::Input_Rate",
+          "started_at": "2026-01-20T14:00:16Z",
+          "ended_at": "2026-01-20T14:00:55Z",
+          "duration_seconds": 39,
+          "stdout": "[INFO] Calling gsm.core::Input_Rate\n[INFO] 55x12 data.frame saved as `lData$Analysis_Input`.",
+          "stderr": ""
+        },
+        {
+          "name": "gsm.core::Summarize",
+          "started_at": "2026-01-20T14:00:55Z",
+          "ended_at": "2026-01-20T14:01:20Z",
+          "duration_seconds": 25,
+          "stdout": "[INFO] Calling gsm.core::Summarize\n[INFO] 55x8 data.frame saved as `lData$Analysis_Summary`.",
+          "stderr": ""
+        }
+      ]
+    },
+    "Analysis_kri0002": {
+      "started_at": "2026-01-20T14:01:20Z",
+      "ended_at": "2026-01-20T14:02:10Z",
+      "duration_seconds": 50,
+      "stdout": "[INFO] Initializing `Analysis_kri0002` Workflow\n[INFO] Loading data with `lConfig$LoadData`.\n[INFO] Workflow Step 1 of 2: `gsm.core::Input_Rate`\n[INFO] 55x12 data.frame saved as `lData$Analysis_Input`.\n[INFO] Workflow Step 2 of 2: `gsm.core::Summarize`",
+      "stderr": "[ERROR] Error in gsm.core::Summarize: insufficient data for site-level analysis (minimum 3 sites required, found 2)",
+      "steps": [
+        {
+          "name": "gsm.core::Input_Rate",
+          "started_at": "2026-01-20T14:01:23Z",
+          "ended_at": "2026-01-20T14:01:55Z",
+          "duration_seconds": 32,
+          "stdout": "[INFO] Calling gsm.core::Input_Rate\n[INFO] 55x12 data.frame saved as `lData$Analysis_Input`.",
+          "stderr": ""
+        },
+        {
+          "name": "gsm.core::Summarize",
+          "started_at": "2026-01-20T14:01:55Z",
+          "ended_at": "2026-01-20T14:02:10Z",
+          "duration_seconds": 15,
+          "stdout": "",
+          "stderr": "[ERROR] Error in gsm.core::Summarize: insufficient data for site-level analysis (minimum 3 sites required, found 2)"
+        }
+      ]
+    },
+    "Report_report_kri": {
+      "started_at": null,
+      "ended_at": null,
+      "duration_seconds": 0,
+      "stdout": "",
+      "stderr": "",
+      "steps": []
+    }
+  }
+}

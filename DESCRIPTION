@@ -1,0 +1,36 @@
+Package: open.gismo
+Title: Open-Source Analytics Platform Powered by workr
+Version: 0.1.0
+Authors@R: c(
+    person(
+        "Jeremy",
+        "Wildfire",
+        email = "jeremy_wildfire@example.com",
+        role = c("aut", "cre")
+    )
+  )
+Description: A thin integration layer over {workr} that connects four modular
+    components — Database, Analytics Engine, Web Front-end, and Config — into an
+    end-to-end analytics platform. The default implementation uses GitHub as the
+    backbone: repos and releases for storage, GitHub Actions for compute, GitHub
+    Pages for the front-end, and YAML files in repos for configuration.
+License: MIT + file LICENSE
+URL: https://github.com/OpenRBQM/open.gismo
+BugReports: https://github.com/OpenRBQM/open.gismo/issues
+Depends:
+    R (>= 4.1.0)
+Imports:
+    base64enc,
+    httr2,
+    jsonlite
+Suggests:
+    testthat (>= 3.0.0),
+    hedgehog,
+    workr,
+    yaml
+Remotes:
+    workr=OpenRBQM/workr@main
+Config/testthat/edition: 3
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
