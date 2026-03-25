@@ -6,6 +6,7 @@ import { buildPipeline, setPipelineBranch } from './pipeline.js';
 import { buildPackagesTable, loadPackages, loadSnapshotDate } from './packages.js';
 import { setFilter, applyFilters, resetFilters } from './filters.js';
 import { buildDetailView } from './detail.js';
+import { parseYamlMeta } from './parsers.js';
 
 let currentBranch = '';
 let currentPhases = null;
@@ -49,6 +50,22 @@ function updateToggleBtn() {
   if (btn) btn.textContent = compactMode ? 'Detailed' : 'Compact';
 }
 
+function statusKeyForItem(item) {
+  return `${item.Type}_${item.ID}`;
+}
+
+function mergeStatusIntoPhases() {
+  if (!currentPhases) return;
+  for (const items of Object.values(currentPhases)) {
+    for (const item of items) {
+      const key = statusKeyForItem(item);
+      const wfStatus = currentSnapshotStatus?.workflows?.[key];
+      item._steps = wfStatus?.steps || null;
+      item._wfStatus = wfStatus?.status || null;
+    }
+  }
+}
+
 async function onSnapshotSelect(id) {
   currentSnapshotId = id;
   try {
@@ -57,6 +74,8 @@ async function onSnapshotSelect(id) {
   try {
     currentLog = await loadLog(currentBranch, id);
   } catch { currentLog = null; }
+  mergeStatusIntoPhases();
+  renderWorkflows();
 }
 
 async function openDetail(yamlPath) {
@@ -67,7 +86,15 @@ async function openDetail(yamlPath) {
   document.body.style.overflow = 'hidden';
   try {
     const text = await loadWorkflowYaml(currentBranch, yamlPath);
-    content.innerHTML = buildDetailView(text, yamlPath, null, currentSnapshotId, currentBranch, currentLog);
+    // Look up step statuses for this workflow from the current snapshot
+    let stepStatuses = null;
+    if (currentSnapshotStatus?.workflows) {
+      const meta = parseYamlMeta(text);
+      const key = `${meta.Type}_${meta.ID}`;
+      const wf = currentSnapshotStatus.workflows[key];
+      if (wf?.steps) stepStatuses = wf.steps;
+    }
+    content.innerHTML = buildDetailView(text, yamlPath, stepStatuses, currentSnapshotId, currentBranch, currentLog);
     content.querySelector('.modal-close').addEventListener('click', closeDetail);
     const yamlToggle = content.querySelector('.yaml-toggle');
     if (yamlToggle) {
