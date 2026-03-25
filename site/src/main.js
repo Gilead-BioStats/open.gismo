@@ -7,6 +7,7 @@ import { buildPackagesTable, loadPackages, loadSnapshotDate } from './packages.j
 import { setFilter, applyFilters, resetFilters } from './filters.js';
 import { buildDetailView } from './detail.js';
 import { parseYamlMeta } from './parsers.js';
+import { buildExplorer, selectArtifact } from './explorer.js';
 
 let currentBranch = '';
 let currentPhases = null;
@@ -17,12 +18,24 @@ let currentLog = null;
 
 function showTab(name) {
   document.getElementById('workflowsTab').style.display = name === 'workflows' ? '' : 'none';
+  document.getElementById('explorerTab').style.display = name === 'explorer' ? '' : 'none';
   document.getElementById('packagesTab').style.display = name === 'packages' ? '' : 'none';
   document.querySelectorAll('.tab-btn').forEach(b => {
     const active = b.dataset.tab === name;
     b.classList.toggle('active', active);
     b.setAttribute('aria-selected', active);
   });
+}
+
+function renderExplorer() {
+  const eTab = document.getElementById('explorerTab');
+  if (!currentSnapshotStatus || !currentSnapshotId) {
+    eTab.innerHTML = '<div class="loading">Select a snapshot to browse artifacts</div>';
+    return;
+  }
+  eTab.innerHTML = '';
+  const explorer = buildExplorer(currentSnapshotStatus, currentBranch, currentSnapshotId);
+  eTab.appendChild(explorer);
 }
 
 function renderWorkflows() {
@@ -76,6 +89,7 @@ async function onSnapshotSelect(id) {
   } catch { currentLog = null; }
   mergeStatusIntoPhases();
   renderWorkflows();
+  renderExplorer();
 }
 
 async function openDetail(yamlPath) {
@@ -185,12 +199,30 @@ document.getElementById('viewToggle').addEventListener('click', () => {
 // Wire up search
 document.getElementById('searchInput').addEventListener('input', applyFilters);
 
-// Delegate info-button clicks on the workflows tab
+// Delegate info-button and data-button clicks on the workflows tab
 document.getElementById('workflowsTab').addEventListener('click', (e) => {
-  const btn = e.target.closest('.card-info-btn');
-  if (btn && btn.dataset.path) {
+  const infoBtn = e.target.closest('.card-info-btn');
+  if (infoBtn && infoBtn.dataset.path) {
     e.stopPropagation();
-    openDetail(btn.dataset.path);
+    openDetail(infoBtn.dataset.path);
+    return;
+  }
+  const dataBtn = e.target.closest('.card-data-btn');
+  if (dataBtn) {
+    e.stopPropagation();
+    const wfType = dataBtn.dataset.wfType;
+    const wfId = dataBtn.dataset.wfId;
+    const wfKey = `${wfType}_${wfId}`;
+    const wf = currentSnapshotStatus?.workflows?.[wfKey];
+    if (wf?.steps?.length && wf.phase) {
+      const firstOutput = wf.steps.find(s => s.status === 'completed' && s.output);
+      if (firstOutput) {
+        const artifactPath = `${wf.phase}/${wf.workflow_id}/${firstOutput.output}.csv`;
+        showTab('explorer');
+        const explorerEl = document.getElementById('explorerTab').querySelector('.explorer-layout');
+        if (explorerEl) selectArtifact(explorerEl, artifactPath);
+      }
+    }
   }
 });
 

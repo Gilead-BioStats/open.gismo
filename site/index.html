@@ -14,11 +14,15 @@
   <button id="viewToggle" class="toggle-btn" title="Toggle compact/detailed view">Compact</button>
   <div class="tab-btns" role="tablist">
     <button class="tab-btn active" role="tab" aria-selected="true" data-tab="workflows">Workflows</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-tab="explorer">Data</button>
     <button class="tab-btn" role="tab" aria-selected="false" data-tab="packages">Packages</button>
   </div>
 </div>
 <div id="workflowsTab" class="content" role="tabpanel">
   <div class="loading"><span class="spinner"></span> Loading workflows…</div>
+</div>
+<div id="explorerTab" class="content" style="display:none" role="tabpanel">
+  <div class="loading">Select a snapshot to browse artifacts</div>
 </div>
 <div id="packagesTab" class="content" style="display:none" role="tabpanel">
   <div class="loading"><span class="spinner"></span> Loading packages…</div>

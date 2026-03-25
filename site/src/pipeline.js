@@ -19,6 +19,7 @@ function groupByPriority(items) {
 
 const linkSvg = '<svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor"><path d="M3.75 2h3.5a.75.75 0 010 1.5H4.5v8h8V8.75a.75.75 0 011.5 0v3.5A1.75 1.75 0 0112.25 14h-8.5A1.75 1.75 0 012 12.25v-8.5C2 2.784 2.784 2 3.75 2zm6.72-.03h2.78a.75.75 0 01.75.75v2.78a.75.75 0 01-1.5 0V4.31L8.78 8.03a.75.75 0 01-1.06-1.06l3.72-3.72h-1.19a.75.75 0 010-1.5z"/></svg>';
 const infoSvg = '<svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="10" y="14.5" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor">i</text></svg>';
+const dataSvg = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>';
 
 export function makeCard(item, phaseIdx, compact) {
   const p = PHASES[phaseIdx], color = p ? p.color : '#94a3b8';
@@ -33,7 +34,12 @@ export function makeCard(item, phaseIdx, compact) {
       .filter(Boolean).join(' ')
   );
 
-  const actions = `<div class="card-actions"><a href="${ghUrl}" target="_blank" rel="noopener" class="card-link-btn" aria-label="Open in GitHub" title="Open in GitHub">${linkSvg}</a><button class="card-info-btn" data-path="${path}" aria-label="View workflow details" title="View details">${infoSvg}</button></div>`;
+  const hasOutputs = item._steps && item._steps.some(s => s.status === 'completed' && s.output);
+  const dataBtn = hasOutputs
+    ? `<button class="card-data-btn" data-wf-type="${esc(item.Type)}" data-wf-id="${esc(item.ID || item._stem)}" aria-label="View output data" title="View data">${dataSvg}</button>`
+    : '';
+
+  const actions = `<div class="card-actions"><a href="${ghUrl}" target="_blank" rel="noopener" class="card-link-btn" aria-label="Open in GitHub" title="Open in GitHub">${linkSvg}</a>${dataBtn}<button class="card-info-btn" data-path="${path}" aria-label="View workflow details" title="View details">${infoSvg}</button></div>`;
 
   if (compact) {
     return `<div class="card card-compact" data-group="${esc(gl)}" data-type="${esc(at || ot)}" data-search="${search}">
