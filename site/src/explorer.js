@@ -63,12 +63,12 @@ function buildSidebarTree(tree) {
   let h = '';
   for (const [phase, workflows] of Object.entries(tree)) {
     h += `<div class="explorer-phase">`;
-    h += `<div class="explorer-phase-header" data-phase="${esc(phase)}">${chevron} ${folderIcon} <span>${esc(phase)}</span></div>`;
-    h += `<div class="explorer-phase-children">`;
+    h += `<div class="explorer-phase-header collapsed" data-phase="${esc(phase)}">${chevron} ${folderIcon} <span>${esc(phase)}</span></div>`;
+    h += `<div class="explorer-phase-children" style="display:none">`;
     for (const [wfId, artifacts] of Object.entries(workflows)) {
       h += `<div class="explorer-wf">`;
-      h += `<div class="explorer-wf-header" data-wf="${esc(wfId)}">${chevron} ${folderIcon} <span>${esc(wfId)}</span></div>`;
-      h += `<div class="explorer-wf-children">`;
+      h += `<div class="explorer-wf-header collapsed" data-wf="${esc(wfId)}">${chevron} ${folderIcon} <span>${esc(wfId)}</span></div>`;
+      h += `<div class="explorer-wf-children" style="display:none">`;
       for (const a of artifacts) {
         h += `<div class="explorer-item" data-path="${esc(a.path)}" data-domain="${esc(a.domain)}" data-search="${esc(a.domain.toLowerCase())}">`;
         h += `${dataIcon} <span class="explorer-item-name">${esc(a.domain)}</span>`;
@@ -127,14 +127,22 @@ export function buildExplorer(statusData) {
       const match = !q || item.dataset.search.includes(q);
       item.style.display = match ? '' : 'none';
     });
-    // Show phases/workflows that have visible children
+    // Show phases/workflows that have visible children; expand when searching
     sidebar.querySelectorAll('.explorer-wf').forEach(wf => {
       const hasVisible = wf.querySelector('.explorer-item:not([style*="display: none"])');
       wf.style.display = hasVisible ? '' : 'none';
+      const children = wf.querySelector('.explorer-wf-children');
+      const hdr = wf.querySelector('.explorer-wf-header');
+      if (q && hasVisible) { children.style.display = ''; hdr.classList.remove('collapsed'); }
+      else if (!q) { children.style.display = 'none'; hdr.classList.add('collapsed'); }
     });
     sidebar.querySelectorAll('.explorer-phase').forEach(phase => {
       const hasVisible = phase.querySelector('.explorer-wf:not([style*="display: none"])');
       phase.style.display = hasVisible ? '' : 'none';
+      const children = phase.querySelector('.explorer-phase-children');
+      const hdr = phase.querySelector('.explorer-phase-header');
+      if (q && hasVisible) { children.style.display = ''; hdr.classList.remove('collapsed'); }
+      else if (!q) { children.style.display = 'none'; hdr.classList.add('collapsed'); }
     });
   });
 
