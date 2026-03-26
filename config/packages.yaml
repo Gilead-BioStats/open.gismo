@@ -1,0 +1,5 @@
+packages:
+  - Gilead-BioStats/gsm.core
+  - Gilead-BioStats/gsm.mapping
+  - Gilead-BioStats/gsm.kri
+  - Gilead-BioStats/gsm.reporting

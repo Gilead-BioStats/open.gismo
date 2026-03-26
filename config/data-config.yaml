@@ -1,0 +1,69 @@
+domains:
+  Mapped_AE:
+    path: output/Mapped_AE.csv
+  Mapped_COUNTRY:
+    path: output/Mapped_COUNTRY.csv
+  Mapped_DATACHG:
+    path: output/Mapped_DATACHG.csv
+  Mapped_DATAENT:
+    path: output/Mapped_DATAENT.csv
+  Mapped_ENROLL:
+    path: output/Mapped_ENROLL.csv
+  Mapped_EXCLUSION:
+    path: output/Mapped_EXCLUSION.csv
+  Mapped_IE:
+    path: output/Mapped_IE.csv
+  Mapped_LB:
+    path: output/Mapped_LB.csv
+  Mapped_PD:
+    path: output/Mapped_PD.csv
+  Mapped_PK:
+    path: output/Mapped_PK.csv
+  Mapped_QUERY:
+    path: output/Mapped_QUERY.csv
+  Mapped_SDRGCOMP:
+    path: output/Mapped_SDRGCOMP.csv
+  Mapped_SITE:
+    path: output/Mapped_SITE.csv
+  Mapped_STUDCOMP:
+    path: output/Mapped_STUDCOMP.csv
+  Mapped_STUDY:
+    path: output/Mapped_STUDY.csv
+  Mapped_SUBJ:
+    path: output/Mapped_SUBJ.csv
+  Mapped_VISIT:
+    path: output/Mapped_VISIT.csv
+  Raw_AE:
+    path: input/Raw_AE.csv
+  Raw_DATACHG:
+    path: input/Raw_DATACHG.csv
+  Raw_DATAENT:
+    path: input/Raw_DATAENT.csv
+  Raw_ENROLL:
+    path: input/Raw_ENROLL.csv
+  Raw_LB:
+    path: input/Raw_LB.csv
+  Raw_PD:
+    path: input/Raw_PD.csv
+  Raw_PK:
+    path: input/Raw_PK.csv
+  Raw_QUERY:
+    path: input/Raw_QUERY.csv
+  Raw_SDRGCOMP:
+    path: input/Raw_SDRGCOMP.csv
+  Raw_SITE:
+    path: input/Raw_SITE.csv
+  Raw_STUDCOMP:
+    path: input/Raw_STUDCOMP.csv
+  Raw_STUDY:
+    path: input/Raw_STUDY.csv
+  Raw_SUBJ:
+    path: input/Raw_SUBJ.csv
+  Reporting_Bounds:
+    path: output/Reporting_Bounds.csv
+  Reporting_Groups:
+    path: output/Reporting_Groups.csv
+  Reporting_Metrics:
+    path: output/Reporting_Metrics.csv
+  Reporting_Results:
+    path: output/Reporting_Results.csv

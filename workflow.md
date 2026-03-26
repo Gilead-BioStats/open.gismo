@@ -1,0 +1,28 @@
+# Project Setup Workflow
+
+- [x] **Step 1: Create empty branch** — Created orphan `demo` branch in `open.gismo` with no files or history
+- [x] **Step 2: Config files**
+  - [x] `config/packages.yaml` — lists gsm packages to snapshot (gsm.core, gsm.mapping, gsm.kri, gsm.reporting)
+  - [x] `config/study-config.yaml` — project metadata (StudyID, name, title)
+- [x] **Step 3: Workflows** — Ran `workr::pkgSnapshot(branch = "dev")` pulling from packages.yaml; pruned workflows with missing dependencies (EXCLUSION, PK mappings; cou0013/14, kri0013/14 metrics; report_eligibility module)
+  - [x] `manifest.csv` + `rproject.toml` — package versions
+  - [x] `workflows/1_mappings/` — 13 mapping workflows (gsm.mapping)
+  - [x] `workflows/2_metrics/` — 25 metric workflows (gsm.kri: 12 site, 12 country, 1 SRS)
+  - [x] `workflows/3_reporting/` — 4 reporting workflows (gsm.reporting)
+  - [x] `workflows/4_modules/` — 2 report modules (gsm.kri: site + country KRI reports)
+- [x] **Step 4: Input data** — Created `input/initData.R` script and ran it to generate 13 raw CSVs from `gsm.core::lSource`
+- [x] **Step 5: Data config** — Ran `generate_data_config()` to create `config/data-config.yaml` (34 domains) from workflow specs. Filed [#4](https://github.com/Gilead-BioStats/open.gismo/issues/4) to formalize helper.
+- [x] **Step 6: Run pipeline** — `runWorkflows.R` runs all 4 phases and saves outputs in `output/{phase}/{workflowId}/` structure
+  - [x] Phase 1 — Mappings: `output/1_mappings/{ID}/Mapped_{ID}.csv` (13 mapped CSVs)
+  - [x] Phase 2 — Metrics: `output/2_metrics/{ID}/{step_output}.csv` (25 metrics × 5 CSVs)
+  - [x] Phase 3 — Reporting: `output/3_reporting/{ID}/Reporting_{ID}.csv` (4 reporting CSVs)
+  - [x] Phase 4 — Modules: `output/4_modules/{ID}/` with HTML reports (2 KRI reports)
+  - [x] GroupID coercion — numeric site IDs to character before reporting step
+- [x] **Step 7: Build site** — `./build-site.sh` extracts site source from dev, generates data files, builds single-page app
+  - [x] `build-site.sh` — automated build script that:
+    - Extracts site/src/*.js, site/index.html, site/package.json, site/vite.config.js from `dev` branch via `git show` (no branch switching)
+    - Generates `_index.json` — list of workflow YAML paths (44 entries)
+    - Generates `status.json` — only includes steps with actual output files (140 artifacts: 13 mapped CSVs, 125 metric CSVs, 4 reporting CSVs, 2 HTML reports); skips intermediate steps (vThreshold, etc.)
+    - Runs `npm ci && npm run build` → single bundled `index.html` (~50KB)
+  - [x] `index.html` — built output (single bundled file from Vite)
+  - [x] Explorer sidebar — folders collapsed by default, expand on search; HTML reports render in iframe

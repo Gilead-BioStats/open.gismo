@@ -1,0 +1,15 @@
+[project]
+name = "library"
+r_version = "4.4"
+
+repositories = [
+    {alias = "PPM", url = "https://packagemanager.posit.co/cran/latest"}
+]
+
+dependencies = [
+    { name = "gsm.core", git = "https://github.com/Gilead-BioStats/gsm.core.git", tag = "1.1.8" },
+    { name = "gsm.mapping", git = "https://github.com/Gilead-BioStats/gsm.mapping.git", tag = "1.1.2" },
+    { name = "gsm.kri", git = "https://github.com/Gilead-BioStats/gsm.kri.git", tag = "1.4.1" },
+    { name = "gsm.reporting", git = "https://github.com/Gilead-BioStats/gsm.reporting.git", tag = "1.1.3" }
+]
+
