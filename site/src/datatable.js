@@ -1,5 +1,5 @@
 /**
- * Enhanced data table renderer with sort, search, pagination, and column distributions.
+ * Enhanced data table renderer with sort, search, and pagination.
  *
  * buildEnhancedTable(csvText) → HTMLElement
  *   Renders a full-featured data table from CSV text with:
@@ -7,7 +7,6 @@
  *   - Global search filter
  *   - Pagination with configurable page size
  *   - Column type detection (numeric, date, text)
- *   - Mini distribution bars for numeric columns
  *   - Row count and column summary stats
  */
 
@@ -145,10 +144,6 @@ export function buildEnhancedTable(csvText) {
   const colStats = headers.map((_, ci) =>
     colTypes[ci] === 'numeric' ? numericStats(allRows.map(r => r[ci] || '')) : null
   );
-  const colHists = headers.map((_, ci) =>
-    colTypes[ci] === 'numeric' ? buildHistogram(allRows.map(r => r[ci] || '')) : null
-  );
-
   // State
   let filteredRows = allRows;
   let sortCol = -1, sortDir = SORT_NONE;
@@ -230,10 +225,6 @@ export function buildEnhancedTable(csvText) {
       const typeTag = colTypes[ci] === 'numeric' ? '<span class="dt-type-tag">#</span>' : '<span class="dt-type-tag">Aa</span>';
       html += `<th data-col="${ci}" class="dt-sortable" title="${colStats[ci] ? esc(buildStatsTooltip(colStats[ci])) : ''}">`;
       html += `<div class="dt-th-content"><span class="dt-th-name">${esc(h)}</span>${typeTag}<span class="dt-sort-icon">${icon}</span></div>`;
-      // Distribution bar for numeric columns
-      if (colHists[ci]) {
-        html += `<div class="dt-th-dist">${buildDistBar(colHists[ci])}</div>`;
-      }
       html += '</th>';
     });
     html += '</tr></thead><tbody>';
