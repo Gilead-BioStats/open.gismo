@@ -82,6 +82,7 @@ jobs:
             )
 
             message("Created Project Snapshot: ", snapshot_id)
+            message("snapshots.json updated on branch: ", Sys.getenv("SNAPSHOT_BRANCH"))
             writeLines(snapshot_id, "snapshot_id.txt")
           '
 

@@ -135,7 +135,7 @@ jobs:
             )
 
             # Run pipeline using RunProject (multi-phase) if workflows/ has subdirs,
-            # otherwise fall back to RunWorkflows
+            # otherwise fall back to a flat workflow execution path
             workflow_path <- if (dir.exists("workflows")) "workflows" else "workflow"
 
             subdirs <- list.dirs(workflow_path, full.names = FALSE, recursive = FALSE)
@@ -147,8 +147,9 @@ jobs:
                 lConfig = lConfig
               )
             } else {
-              message("Running flat pipeline via RunWorkflows()")
+              message("Loading flat pipeline with MakeWorkflowList()")
               lWorkflows <- MakeWorkflowList(strPath = workflow_path)
+              message("Executing flat pipeline with RunWorkflows()")
               lResults <- RunWorkflows(
                 lWorkflows = lWorkflows,
                 lData = NULL,

@@ -54,6 +54,19 @@ get_run_steps <- function(wf) {
   runs
 }
 
+# Helper to extract all steps from all jobs in a workflow
+get_job_steps <- function(wf) {
+  steps_out <- list()
+  jobs <- wf[["jobs"]]
+  for (job_name in names(jobs)) {
+    steps <- jobs[[job_name]][["steps"]]
+    if (is.list(steps)) {
+      steps_out <- c(steps_out, steps)
+    }
+  }
+  steps_out
+}
+
 # Helper to check if any run step contains a pattern
 has_run_pattern <- function(wf, pattern) {
   runs <- get_run_steps(wf)
@@ -312,39 +325,40 @@ test_that("build-site.yaml has jobs section", {
   expect_true(length(wf[["jobs"]]) >= 1)
 })
 
-test_that("build-site.yaml collects snapshot data from ss-* branches", {
+test_that("build-site.yaml triggers on pushes to demo", {
   wf <- read_workflow("build-site.yaml")
-  runs <- get_run_steps(wf)
-  has_branch_collection <- any(grepl("ss-|snapshot|branches", runs, ignore.case = TRUE))
-  expect_true(has_branch_collection,
-    info = "Must collect data from ss-* snapshot branches"
+  push_branches <- wf[["on"]][["push"]][["branches"]]
+  expect_true("demo" %in% push_branches,
+    info = "Must trigger on pushes to the demo branch"
   )
 })
 
-test_that("build-site.yaml generates branches.json", {
+test_that("build-site.yaml checks out the demo branch explicitly", {
   wf <- read_workflow("build-site.yaml")
-  runs <- get_run_steps(wf)
-  has_branches_json <- any(grepl("branches\\.json", runs))
-  expect_true(has_branches_json,
-    info = "Must generate branches.json listing snapshot branches"
+  steps <- get_job_steps(wf)
+  checkout_steps <- Filter(function(step) identical(step[["uses"]], "actions/checkout@v4"), steps)
+  expect_true(length(checkout_steps) >= 1,
+    info = "Must use actions/checkout@v4"
+  )
+  refs <- vapply(checkout_steps, function(step) {
+    with <- step[["with"]]
+    if (is.null(with) || is.null(with[["ref"]])) "" else with[["ref"]]
+  }, character(1))
+  expect_true(any(refs == "demo"),
+    info = "Must check out the demo branch for deployment"
   )
 })
 
-test_that("build-site.yaml generates _index.json per branch", {
+test_that("build-site.yaml validates required demo site artifacts", {
   wf <- read_workflow("build-site.yaml")
   runs <- get_run_steps(wf)
-  has_index_json <- any(grepl("_index\\.json", runs))
-  expect_true(has_index_json,
-    info = "Must generate _index.json per branch"
-  )
-})
-
-test_that("build-site.yaml builds Vite app", {
-  wf <- read_workflow("build-site.yaml")
-  runs <- get_run_steps(wf)
-  has_vite_build <- any(grepl("npm run build|vite build|npx vite", runs, ignore.case = TRUE))
-  expect_true(has_vite_build,
-    info = "Must build the Vite front-end app"
+  has_index_check <- any(grepl("test -f index\\.html", runs)) &&
+    any(grepl("test -f _index\\.json", runs)) &&
+    any(grepl("test -d workflows", runs)) &&
+    any(grepl("test -d output", runs)) &&
+    any(grepl("test -f manifest\\.csv", runs))
+  expect_true(has_index_check,
+    info = "Must validate the built site and required data artifacts on demo"
   )
 })
 
@@ -359,12 +373,19 @@ test_that("build-site.yaml deploys to GitHub Pages", {
   )
 })
 
-test_that("build-site.yaml fetches snapshots.json for project snapshots", {
+test_that("build-site.yaml uploads the demo branch root", {
   wf <- read_workflow("build-site.yaml")
-  runs <- get_run_steps(wf)
-  has_snapshots <- any(grepl("snapshots\\.json", runs))
-  expect_true(has_snapshots,
-    info = "Must fetch snapshots.json for project snapshot data"
+  steps <- get_job_steps(wf)
+  upload_steps <- Filter(function(step) identical(step[["uses"]], "actions/upload-pages-artifact@v3"), steps)
+  expect_true(length(upload_steps) >= 1,
+    info = "Must upload a Pages artifact"
+  )
+  paths <- vapply(upload_steps, function(step) {
+    with <- step[["with"]]
+    if (is.null(with) || is.null(with[["path"]])) "" else with[["path"]]
+  }, character(1))
+  expect_true(any(paths == "."),
+    info = "Must upload the demo branch root for deployment"
   )
 })
 
