@@ -1,6 +1,6 @@
 # Overview
 
-open.gismo is an end-to-end platform for running workflows in R using the {workr} package. 
+open.gismo is an end-to-end platform for running workflows in R using the {workr} package. You can explore the prototype [here](https://gilead-biostats.github.io/open.gismo/). 
 
 # Design
 
@@ -13,26 +13,25 @@ There are 4 main components that work together to form a fully open source analy
 
 This repo provides a sample fully public and open-source implementation, largely for demo purposes, but the approach is highly modular, and a variety of technologies can be used for each component. 
 
-# Database
+## Database
 
-The database stores all data needed to run the workflows. 
+The database stores all data needed to run the workflows. Many possible implementations exist including: 
 
-This package uses GitHub (release artifacts and data committed directly to repos) as the default database, but many possible implementations exist including: 
+- Github Repo **current state**
+- GitHub Artifacts **future state**
 - Supabase
-- GitHub: either Action artifacts, release artifacts or data committed directly to repos
 - AWS S3 bucket + DuckDB
 
-# Analytics Engine
+## Analytics Engine
 
-The analytics engine loads all needed packages and executes the workflows using {workr}. It pulls data from the database using custom `lConfig.saveData` and `lConfig.loadData` hooks in [`workr::RunWorkflow`](https://github.com/Gilead-BioStats/workr/blob/main/R/RunWorkflow.R) 
+The analytics engine loads all needed packages and executes the workflows using {workr}. Approaches include: 
 
-This package uses GitHub Actions as the default analytics engine, but many possible implementations exist including: 
-
-- GitHub Actions
+- User-Run Scripts - **Current State** 
+- GitHub Actions - **Future State** {workr}-based actions with custom `lConfig.saveData` and `lConfig.loadData` hooks in [`workr::RunWorkflow`](https://github.com/Gilead-BioStats/workr/blob/main/R/RunWorkflow.R) to pull data from database.  
 - R Shiny App (possibly with WASM)
 - AWS framework (e.g. via lambdas)
 
-# Web Front-end
+## Web Front-end
 
 The web front-end provides a user-friendly interface to explore {workr} pipelines. Data is served from the database, pipeline specific data is read from the config. A prototype of the front-end is available at https://github.com/Gilead-BioStats/workr/tree/main/site
 
@@ -45,12 +44,47 @@ Users can:
 
 This package uses GitHub Pages as the default front-end, but many possible implementations exist including: 
 
-- GitHub Pages (used in Prototype)
+- GitHub Pages (used in Prototype) - **Current and Future State**
 - React/Next.js hosted on Vercel or similar
 
-# Config
+## Config
 
 YAML workflow and config files are typically saved in folders in GitHub Repos (but could be pulled from other locations). A set of example projects to be used for development and testing are saved [here](https://github.com/Gilead-BioStats/workr/tree/dev/inst/workflows)
+
+# Current Build Process
+
+The current demo build process is implemented on the `demo` branch as a simple branch-root project that can be regenerated end to end.
+
+1. **Initialize project config**
+	- Define `config/packages.yaml` with the gsm packages to snapshot.
+	- Define `config/study-config.yaml` with the study metadata.
+
+2. **Snapshot and prune workflows**
+	- Run `workr::pkgSnapshot(branch = "dev")` to materialize workflow YAMLs and package metadata.
+	- Keep `manifest.csv` and `rproject.toml`.
+	- Remove workflows that depend on unavailable demo inputs, including EXCLUSION, PK, related metrics, and the eligibility module.
+
+3. **Generate demo input data**
+	- Run `input/initData.R` to create the raw CSV inputs from `gsm.core::lSource`.
+	- The demo currently generates 13 raw input domains.
+
+4. **Build data configuration**
+	- Generate `config/data-config.yaml` from workflow specs so the project has explicit domain-to-file mappings for the pipeline inputs.
+
+5. **Run the pipeline**
+	- Execute `runWorkflows.R` to run all four workflow phases.
+	- Outputs are written to `output/{phase}/{workflowId}/`.
+	- Phase outputs are organized as mappings, metrics, reporting datasets, and HTML modules.
+	- `GroupID` is normalized to character before reporting so site- and country-level outputs remain compatible.
+
+6. **Build the static site payload**
+	- Run `./build-site.sh`.
+	- The script pulls the current site source from `dev` using `git show` rather than switching branches.
+	- It generates `_index.json`, generates file-backed `status.json`, and runs `npm ci && npm run build` to produce the bundled `index.html`.
+
+7. **Publish the demo branch**
+	- The `demo` branch root is the deployable payload.
+	- GitHub Pages now deploys that branch content through GitHub Actions after validating that the expected build artifacts are present.
 
 # AI Skills
 
