@@ -36,8 +36,8 @@ function notRunStep(overrides = {}) {
   };
 }
 
-const SNAPSHOT_ID = 'ps-001';
-const BRANCH = 'ss-dev';
+
+
 
 /* ── buildArtifactViewer — completed steps ───────────────────── */
 
@@ -45,7 +45,7 @@ describe('buildArtifactViewer — completed step', () => {
   beforeEach(() => { document.body.innerHTML = ''; });
 
   it('returns an HTMLElement', () => {
-    const el = buildArtifactViewer(completedStep(), SNAPSHOT_ID, BRANCH);
+    const el = buildArtifactViewer(completedStep());
     expect(el).toBeInstanceOf(HTMLElement);
   });
 
@@ -56,7 +56,7 @@ describe('buildArtifactViewer — completed step', () => {
         { domain: 'Raw_DM', path: 'input/Raw_DM.csv' },
       ],
     });
-    const el = buildArtifactViewer(step, SNAPSHOT_ID, BRANCH);
+    const el = buildArtifactViewer(step);
     const text = el.textContent;
     expect(text).toContain('Raw_AE');
     expect(text).toContain('Raw_DM');
@@ -69,14 +69,14 @@ describe('buildArtifactViewer — completed step', () => {
         { domain: 'Mapped_DM', path: '1_mappings/DM/Mapped_DM.csv' },
       ],
     });
-    const el = buildArtifactViewer(step, SNAPSHOT_ID, BRANCH);
+    const el = buildArtifactViewer(step);
     const text = el.textContent;
     expect(text).toContain('Mapped_AE');
     expect(text).toContain('Mapped_DM');
   });
 
   it('contains an inputs section and an outputs section', () => {
-    const el = buildArtifactViewer(completedStep(), SNAPSHOT_ID, BRANCH);
+    const el = buildArtifactViewer(completedStep());
     const html = el.innerHTML.toLowerCase();
     expect(html).toContain('input');
     expect(html).toContain('output');
@@ -84,7 +84,7 @@ describe('buildArtifactViewer — completed step', () => {
 
   it('displays artifact path information', () => {
     const step = completedStep();
-    const el = buildArtifactViewer(step, SNAPSHOT_ID, BRANCH);
+    const el = buildArtifactViewer(step);
     const text = el.textContent;
     expect(text).toContain('Raw_AE');
     expect(text).toContain('Mapped_AE');
@@ -97,12 +97,12 @@ describe('buildArtifactViewer — failed step with partial outputs', () => {
   beforeEach(() => { document.body.innerHTML = ''; });
 
   it('returns an HTMLElement for a failed step', () => {
-    const el = buildArtifactViewer(failedStep(), SNAPSHOT_ID, BRANCH);
+    const el = buildArtifactViewer(failedStep());
     expect(el).toBeInstanceOf(HTMLElement);
   });
 
   it('lists input artifacts for a failed step', () => {
-    const el = buildArtifactViewer(failedStep(), SNAPSHOT_ID, BRANCH);
+    const el = buildArtifactViewer(failedStep());
     expect(el.textContent).toContain('Analysis_Input');
   });
 
@@ -112,13 +112,13 @@ describe('buildArtifactViewer — failed step with partial outputs', () => {
         { domain: 'Partial_Result', path: '2_metrics/kri0001/Partial_Result.csv' },
       ],
     });
-    const el = buildArtifactViewer(step, SNAPSHOT_ID, BRANCH);
+    const el = buildArtifactViewer(step);
     expect(el.textContent).toContain('Partial_Result');
   });
 
   it('shows output artifacts even when step failed', () => {
     const step = failedStep();
-    const el = buildArtifactViewer(step, SNAPSHOT_ID, BRANCH);
+    const el = buildArtifactViewer(step);
     // The output section should still be present and list the artifact
     expect(el.textContent).toContain('Analysis_Summary');
   });
@@ -130,12 +130,12 @@ describe('buildArtifactViewer — not_run step', () => {
   beforeEach(() => { document.body.innerHTML = ''; });
 
   it('returns an HTMLElement for a not_run step', () => {
-    const el = buildArtifactViewer(notRunStep(), SNAPSHOT_ID, BRANCH);
+    const el = buildArtifactViewer(notRunStep());
     expect(el).toBeInstanceOf(HTMLElement);
   });
 
   it('displays a message indicating no artifacts are available', () => {
-    const el = buildArtifactViewer(notRunStep(), SNAPSHOT_ID, BRANCH);
+    const el = buildArtifactViewer(notRunStep());
     const text = el.textContent.toLowerCase();
     expect(text).toMatch(/no artifacts|not available|disabled/);
   });
@@ -145,13 +145,13 @@ describe('buildArtifactViewer — not_run step', () => {
       inputs: [{ domain: 'ShouldNotShow', path: 'x.csv' }],
       outputs: [{ domain: 'AlsoHidden', path: 'y.csv' }],
     });
-    const el = buildArtifactViewer(step, SNAPSHOT_ID, BRANCH);
+    const el = buildArtifactViewer(step);
     expect(el.textContent).not.toContain('ShouldNotShow');
     expect(el.textContent).not.toContain('AlsoHidden');
   });
 
   it('has a disabled visual indicator (CSS class or attribute)', () => {
-    const el = buildArtifactViewer(notRunStep(), SNAPSHOT_ID, BRANCH);
+    const el = buildArtifactViewer(notRunStep());
     const isDisabled =
       el.classList.contains('artifact-viewer-disabled') ||
       el.getAttribute('aria-disabled') === 'true' ||

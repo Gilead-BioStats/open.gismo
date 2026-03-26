@@ -4,17 +4,7 @@ name: Build and Deploy Site
   push:
     branches:
       - 'ss-*'
-  release:
-    types: [published]
   workflow_dispatch:
-    inputs:
-      snapshot_branch:
-        description: 'Snapshot branch to build site from (e.g., ss-dev)'
-        required: false
-        type: string
-        default: ''
-  schedule:
-    - cron: '0 6 * * *'
 
 permissions:
   contents: read
@@ -30,98 +20,22 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Determine project branch
-        id: branch
+      - name: Generate _index.json
         run: |
-          # Use explicit input, triggering ss-* branch, or auto-detect first ss-* branch
-          if [ -n "${{ inputs.snapshot_branch }}" ]; then
-            BRANCH="${{ inputs.snapshot_branch }}"
-          elif [[ "${{ github.ref_name }}" == ss-* ]]; then
-            BRANCH="${{ github.ref_name }}"
+          if [ -d "workflows" ]; then
+            find workflows -name "*.yaml" -o -name "*.yml" | sort | \
+              jq -R -s 'split("\n") | map(select(length > 0))' > _index.json
           else
-            BRANCH=$(git branch -r | grep 'origin/ss-' | head -1 | sed 's|origin/||' | xargs)
+            echo "[]" > _index.json
           fi
-          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
-          echo "Using branch: $BRANCH"
-
-      - name: Collect project data
-        env:
-          BRANCH: ${{ steps.branch.outputs.branch }}
-        run: |
-          mkdir -p site/public/data
-
-          if [ -z "$BRANCH" ]; then
-            echo "No snapshot branch found"
-            echo '{"branch":""}' > site/public/data/config.json
-            exit 0
-          fi
-
-          # Write config.json with the project branch
-          echo "{\"branch\":\"$BRANCH\"}" | jq '.' > site/public/data/config.json
-
-          mkdir -p "site/public/data/$BRANCH"
-
-          # Copy manifest.csv
-          git show "origin/$BRANCH:manifest.csv" > "site/public/data/$BRANCH/manifest.csv" 2>/dev/null || true
-
-          # Copy snapshot date
-          git show "origin/$BRANCH:_snapshot_date.txt" > "site/public/data/$BRANCH/_snapshot_date.txt" 2>/dev/null || true
-
-          # Extract workflow files (handle both workflows/ and workflow/ dirs)
-          WORKFLOW_DIR=""
-          if git ls-tree --name-only "origin/$BRANCH" workflows/ > /dev/null 2>&1; then
-            WORKFLOW_DIR="workflows"
-          elif git ls-tree --name-only "origin/$BRANCH" workflow/ > /dev/null 2>&1; then
-            WORKFLOW_DIR="workflow"
-          fi
-
-          if [ -n "$WORKFLOW_DIR" ]; then
-            mkdir -p "site/public/data/$BRANCH/workflows"
-            git ls-tree -r --name-only "origin/$BRANCH" "$WORKFLOW_DIR/" | while read -r wf_file; do
-              if echo "$wf_file" | grep -qE '\.(yaml|yml)$'; then
-                dest_path="site/public/data/$BRANCH/workflows/${wf_file#$WORKFLOW_DIR/}"
-                mkdir -p "$(dirname "$dest_path")"
-                git show "origin/$BRANCH:$wf_file" > "$dest_path" 2>/dev/null || true
-              fi
-            done
-          fi
-
-          # Generate _index.json
-          if [ -d "site/public/data/$BRANCH/workflows" ]; then
-            find "site/public/data/$BRANCH/workflows" -name "*.yaml" -o -name "*.yml" | \
-              sed "s|site/public/data/$BRANCH/||" | sort | \
-              jq -R -s 'split("\n") | map(select(length > 0))' > "site/public/data/$BRANCH/_index.json"
-          else
-            echo "[]" > "site/public/data/$BRANCH/_index.json"
-          fi
-
-          # Build snapshots.json from release tags
-          # Each release tag ps-NNN on this branch represents a project snapshot
-          SNAPSHOTS="[]"
-          git show "origin/$BRANCH:snapshots.json" > "site/public/data/$BRANCH/snapshots.json" 2>/dev/null || true
-
-          # If snapshots.json exists, fetch status.json and log.json for each snapshot
-          if [ -f "site/public/data/$BRANCH/snapshots.json" ]; then
-            SNAPSHOT_IDS=$(jq -r '.snapshots[]?.snapshot_id // empty' "site/public/data/$BRANCH/snapshots.json" 2>/dev/null || true)
-            for SID in $SNAPSHOT_IDS; do
-              if [ -n "$SID" ]; then
-                mkdir -p "site/public/data/$BRANCH/$SID"
-                git show "origin/$BRANCH:$SID/status.json" > "site/public/data/$BRANCH/$SID/status.json" 2>/dev/null || true
-                git show "origin/$BRANCH:$SID/log.json" > "site/public/data/$BRANCH/$SID/log.json" 2>/dev/null || true
-              fi
-            done
-          fi
-
-          echo "Data collection complete for branch: $BRANCH"
-          find site/public/data -type f | sort
+          echo "Generated _index.json:"
+          cat _index.json
 
       - name: Install site dependencies
         run: npm ci
@@ -137,7 +51,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
+          path: .
 
       - name: Deploy to GitHub Pages
         id: deployment

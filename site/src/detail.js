@@ -48,7 +48,7 @@ function buildSpecSection(spec) {
   return h + '</div>';
 }
 
-function buildStepsSection(steps, stepStatuses, snapshotId, branch) {
+function buildStepsSection(steps, stepStatuses) {
   if (!steps.length) return '';
   let h = '<div class="detail-section"><div class="detail-section-title">Steps</div><div class="detail-steps">';
   steps.forEach((step, i) => {
@@ -77,7 +77,7 @@ function buildStepsSection(steps, stepStatuses, snapshotId, branch) {
     }
     // Render artifact viewer for the step (shows disabled state when no status)
     const artifactStep = statusData || { name: step.name, status: 'not_run' };
-    const artifactEl = buildArtifactViewer(artifactStep, snapshotId || '', branch || '');
+    const artifactEl = buildArtifactViewer(artifactStep);
     const tmp2 = document.createElement('div');
     tmp2.appendChild(artifactEl);
     h += tmp2.innerHTML;
@@ -89,7 +89,7 @@ function buildStepsSection(steps, stepStatuses, snapshotId, branch) {
   return h + '</div></div>';
 }
 
-export function buildDetailView(yamlText, yamlPath, stepStatuses, snapshotId, branch, log) {
+export function buildDetailView(yamlText, yamlPath, stepStatuses, log) {
   const { meta, spec, steps } = parseWorkflow(yamlText);
   const color = phaseColor(yamlPath);
   const id = meta.ID || yamlPath.split('/').pop().replace('.yaml', '');
@@ -102,7 +102,7 @@ export function buildDetailView(yamlText, yamlPath, stepStatuses, snapshotId, br
   h += `<div class="modal-body"><div class="detail-parsed">`;
   h += buildMetaSection(meta);
   h += buildSpecSection(spec);
-  h += buildStepsSection(steps, stepStatuses, snapshotId, branch);
+  h += buildStepsSection(steps, stepStatuses);
 
   // Log viewer section
   const logEl = buildLogViewer(log || null, workflowKey);

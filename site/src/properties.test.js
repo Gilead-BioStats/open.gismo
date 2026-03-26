@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
 import { parseWorkflow, parseCsv } from './parsers.js';
 import { PHASES } from './constants.js';
-import { makeCard, setPipelineBranch } from './pipeline.js';
+import { makeCard } from './pipeline.js';
 import { buildDetailView } from './detail.js';
 import { buildPackagesTable } from './packages.js';
 import { applyFilters, resetFilters } from './filters.js';
@@ -161,7 +161,7 @@ describe('Property 7: Workflow Phase Grouping', () => {
 
     fc.assert(
       fc.property(arbPaths, (paths) => {
-        // Group using the same logic as data.js loadBranch
+        // Group using the same logic as data.js loadWorkflows
         const filesByPhase = {};
         paths.forEach(p => {
           const rel = p.replace('workflows/', '');
@@ -207,7 +207,6 @@ describe('Property 8: Workflow Card Contains Required Information', () => {
 
     fc.assert(
       fc.property(arbItem, (item) => {
-        setPipelineBranch('ss-dev');
         const html = makeCard(item, 2, false);
         expect(html).toContain(item.ID);
         expect(html).toContain(item.Description);
@@ -238,7 +237,6 @@ describe('Property 9: Compact Mode Omits Metadata Tags', () => {
 
     fc.assert(
       fc.property(arbItem, (item) => {
-        setPipelineBranch('ss-dev');
         const html = makeCard(item, 2, true);
         expect(html).toContain(item.ID);
         // Compact mode should not contain tag elements

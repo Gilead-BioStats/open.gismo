@@ -17,15 +17,15 @@ export function buildPackagesTable(rows, snapshotDate) {
   return h + '</tbody></table>';
 }
 
-export async function loadPackages(branch) {
-  const res = await fetch(`data/${branch}/manifest.csv`);
+export async function loadPackages() {
+  const res = await fetch('manifest.csv');
   if (!res.ok) throw new Error('not found');
   return parseCsv(await res.text());
 }
 
-export async function loadSnapshotDate(branch) {
+export async function loadSnapshotDate() {
   try {
-    const res = await fetch(`data/${branch}/_snapshot_date.txt`);
+    const res = await fetch('_snapshot_date.txt');
     if (!res.ok) return null;
     return (await res.text()).trim();
   } catch { return null; }

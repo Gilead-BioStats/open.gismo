@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { makeCard, buildPipeline, setPipelineBranch } from './pipeline.js';
+import { makeCard, buildPipeline } from './pipeline.js';
 
 describe('makeCard', () => {
   const baseItem = {
@@ -13,7 +13,6 @@ describe('makeCard', () => {
   };
 
   it('renders a detailed card with ID, description, priority, group level, and analysis type', () => {
-    setPipelineBranch('ss-dev');
     const html = makeCard(baseItem, 1, false);
     expect(html).toContain('AE');
     expect(html).toContain('Map raw AE data');
@@ -23,7 +22,6 @@ describe('makeCard', () => {
   });
 
   it('renders a compact card with ID but without priority/group/analysis tags', () => {
-    setPipelineBranch('ss-dev');
     const html = makeCard(baseItem, 1, true);
     expect(html).toContain('AE');
     expect(html).toContain('card-compact');
@@ -33,7 +31,6 @@ describe('makeCard', () => {
   });
 
   it('includes data-group and data-search attributes for filtering', () => {
-    setPipelineBranch('ss-dev');
     const html = makeCard(baseItem, 1, false);
     expect(html).toContain('data-group="Site"');
     expect(html).toContain('data-search=');
@@ -42,7 +39,6 @@ describe('makeCard', () => {
 
 describe('buildPipeline', () => {
   it('groups workflows by phase and renders phase headers', () => {
-    setPipelineBranch('ss-dev');
     const phases = {
       1: [
         { ID: 'AE', Description: 'AE mapping', Priority: '1', GroupLevel: 'Site', _stem: 'AE', _path: 'workflows/1_mappings/AE.yaml' },
@@ -61,7 +57,6 @@ describe('buildPipeline', () => {
   });
 
   it('renders summary stats with workflow counts per phase', () => {
-    setPipelineBranch('ss-dev');
     const phases = {
       1: [
         { ID: 'AE', Priority: '0', _stem: 'AE', _path: 'workflows/1_mappings/AE.yaml' },

@@ -1,7 +1,7 @@
 /**
  * Snapshot Explorer — sidebar tree of output artifacts + data viewer panel.
  *
- * buildExplorer(statusData, branch, snapshotId, onSelect) → HTMLElement
+ * buildExplorer(statusData) → HTMLElement
  *   Renders the full explorer layout: sidebar (tree + search) and main viewer.
  *
  * The artifact tree is derived from status.json: each workflow's completed
@@ -86,11 +86,9 @@ function buildSidebarTree(tree) {
  * Build the full Snapshot Explorer element.
  *
  * @param {object} statusData - Parsed status.json
- * @param {string} branch
- * @param {string} snapshotId
  * @returns {HTMLElement}
  */
-export function buildExplorer(statusData, branch, snapshotId) {
+export function buildExplorer(statusData) {
   const artifacts = extractArtifacts(statusData);
   const tree = groupArtifacts(artifacts);
 
@@ -154,12 +152,12 @@ export function buildExplorer(statusData, branch, snapshotId) {
 
     viewer.innerHTML = '<div class="explorer-loading"><span class="spinner"></span> Loading…</div>';
     try {
-      const text = await loadArtifact(branch, snapshotId, path);
+      const text = await loadArtifact(path);
       viewer.innerHTML = '';
       // Header
       const header = document.createElement('div');
       header.className = 'explorer-viewer-header';
-      header.innerHTML = `<span class="explorer-viewer-title">${dataIcon} ${esc(domain)}</span><span class="explorer-viewer-snap">${esc(snapshotId)}</span>`;
+      header.innerHTML = `<span class="explorer-viewer-title">${dataIcon} ${esc(domain)}</span>`;
       viewer.appendChild(header);
       // Data table
       const table = buildEnhancedTable(text);

@@ -88,11 +88,9 @@ export function buildDataTable(csvText) {
  * For not_run steps: shows disabled state with "no artifacts" message.
  *
  * @param {object} step - Step object with name, status, inputs, outputs, error
- * @param {string} snapshotId - Project snapshot ID
- * @param {string} branch - Branch name
  * @returns {HTMLElement}
  */
-export function buildArtifactViewer(step, snapshotId, branch) {
+export function buildArtifactViewer(step) {
   const el = document.createElement('div');
   el.className = 'artifact-viewer';
 

@@ -3,9 +3,6 @@ import { esc } from './utils.js';
 import { buildStatusBadge, buildStatusSummary } from './status.js';
 
 const REPO_BASE = 'https://github.com/OpenRBQM/open.gismo';
-let currentBranch = '';
-
-export function setPipelineBranch(branch) { currentBranch = branch; }
 
 function normalizePriority(item) {
   if (!item.Priority && item.Priority !== 0) item.Priority = '0';
@@ -28,7 +25,7 @@ export function makeCard(item, phaseIdx, compact) {
   const gl = item.GroupLevel || '', at = item.AnalysisType || '', ot = item.Output || '';
   const pri = item.Priority;
   const path = esc(item._path || '');
-  const ghUrl = `${REPO_BASE}/blob/${esc(currentBranch)}/${path}`;
+  const ghUrl = `${REPO_BASE}/blob/HEAD/${path}`;
   const search = esc(
     [item._stem, item.ID, item.Description, item.Metric, item.Name, gl, at, item.Abbreviation]
       .filter(Boolean).join(' ')

@@ -1,19 +1,16 @@
 import './style.css';
 import { esc } from './utils.js';
-import { loadConfig, loadBranch, loadWorkflowYaml, loadSnapshots, loadSnapshotStatus, loadLog } from './data.js';
-import { buildSnapshotSelector } from './snapshots.js';
-import { buildPipeline, setPipelineBranch } from './pipeline.js';
+import { loadWorkflows, loadWorkflowYaml, loadStatus, loadLog } from './data.js';
+import { buildPipeline } from './pipeline.js';
 import { buildPackagesTable, loadPackages, loadSnapshotDate } from './packages.js';
 import { setFilter, applyFilters, resetFilters } from './filters.js';
 import { buildDetailView } from './detail.js';
 import { parseYamlMeta } from './parsers.js';
 import { buildExplorer, selectArtifact } from './explorer.js';
 
-let currentBranch = '';
 let currentPhases = null;
 let compactMode = false;
-let currentSnapshotId = null;
-let currentSnapshotStatus = null;
+let currentStatus = null;
 let currentLog = null;
 
 function showTab(name) {
@@ -29,12 +26,12 @@ function showTab(name) {
 
 function renderExplorer() {
   const eTab = document.getElementById('explorerTab');
-  if (!currentSnapshotStatus || !currentSnapshotId) {
-    eTab.innerHTML = '<div class="loading">Select a snapshot to browse artifacts</div>';
+  if (!currentStatus) {
+    eTab.innerHTML = '<div class="loading">No status.json available</div>';
     return;
   }
   eTab.innerHTML = '';
-  const explorer = buildExplorer(currentSnapshotStatus, currentBranch, currentSnapshotId);
+  const explorer = buildExplorer(currentStatus);
   eTab.appendChild(explorer);
 }
 
@@ -42,20 +39,12 @@ function renderWorkflows() {
   if (!currentPhases) return;
   const wTab = document.getElementById('workflowsTab');
 
-  // Preserve snapshot selector if it exists
-  const existingSelector = wTab.querySelector('.snapshot-selector');
-
   wTab.innerHTML = buildPipeline(currentPhases, compactMode);
   wTab.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => setFilter(btn.dataset.group));
   });
   resetFilters();
   updateToggleBtn();
-
-  // Re-insert snapshot selector at the top
-  if (existingSelector) {
-    wTab.insertBefore(existingSelector, wTab.firstChild);
-  }
 }
 
 function updateToggleBtn() {
@@ -72,24 +61,11 @@ function mergeStatusIntoPhases() {
   for (const items of Object.values(currentPhases)) {
     for (const item of items) {
       const key = statusKeyForItem(item);
-      const wfStatus = currentSnapshotStatus?.workflows?.[key];
+      const wfStatus = currentStatus?.workflows?.[key];
       item._steps = wfStatus?.steps || null;
       item._wfStatus = wfStatus?.status || null;
     }
   }
-}
-
-async function onSnapshotSelect(id) {
-  currentSnapshotId = id;
-  try {
-    currentSnapshotStatus = await loadSnapshotStatus(currentBranch, id);
-  } catch { currentSnapshotStatus = null; }
-  try {
-    currentLog = await loadLog(currentBranch, id);
-  } catch { currentLog = null; }
-  mergeStatusIntoPhases();
-  renderWorkflows();
-  renderExplorer();
 }
 
 async function openDetail(yamlPath) {
@@ -99,16 +75,16 @@ async function openDetail(yamlPath) {
   content.innerHTML = '<div class="loading"><span class="spinner"></span> Loading workflow…</div>';
   document.body.style.overflow = 'hidden';
   try {
-    const text = await loadWorkflowYaml(currentBranch, yamlPath);
-    // Look up step statuses for this workflow from the current snapshot
+    const text = await loadWorkflowYaml(yamlPath);
+    // Look up step statuses for this workflow
     let stepStatuses = null;
-    if (currentSnapshotStatus?.workflows) {
+    if (currentStatus?.workflows) {
       const meta = parseYamlMeta(text);
       const key = `${meta.Type}_${meta.ID}`;
-      const wf = currentSnapshotStatus.workflows[key];
+      const wf = currentStatus.workflows[key];
       if (wf?.steps) stepStatuses = wf.steps;
     }
-    content.innerHTML = buildDetailView(text, yamlPath, stepStatuses, currentSnapshotId, currentBranch, currentLog);
+    content.innerHTML = buildDetailView(text, yamlPath, stepStatuses, currentLog);
     content.querySelector('.modal-close').addEventListener('click', closeDetail);
     const yamlToggle = content.querySelector('.yaml-toggle');
     if (yamlToggle) {
@@ -135,21 +111,19 @@ function closeDetail() {
 async function init() {
   const wTab = document.getElementById('workflowsTab');
   const pTab = document.getElementById('packagesTab');
-  const branchLabel = document.getElementById('projectBranch');
 
   try {
-    // Load project config to get the branch
-    const config = await loadConfig();
-    currentBranch = config.branch;
-    setPipelineBranch(currentBranch);
-    branchLabel.textContent = currentBranch;
-
-    // Load workflows, snapshots, and packages in parallel
-    const [phases, snapshots, pkgResult] = await Promise.allSettled([
-      loadBranch(currentBranch),
-      loadSnapshots(currentBranch),
-      Promise.all([loadPackages(currentBranch), loadSnapshotDate(currentBranch)]),
+    // Load workflows, status, log, and packages in parallel
+    const [phases, status, log, pkgResult] = await Promise.allSettled([
+      loadWorkflows(),
+      loadStatus(),
+      loadLog(),
+      Promise.all([loadPackages(), loadSnapshotDate()]),
     ]);
+
+    // Store status and log
+    currentStatus = status.status === 'fulfilled' ? status.value : null;
+    currentLog = log.status === 'fulfilled' ? log.value : null;
 
     // Render workflows
     if (phases.status === 'fulfilled') {
@@ -157,6 +131,7 @@ async function init() {
       if (Object.keys(currentPhases).length === 0) {
         wTab.innerHTML = '<div class="loading">No workflows found</div>';
       } else {
+        mergeStatusIntoPhases();
         renderWorkflows();
         document.getElementById('searchInput').value = '';
       }
@@ -164,14 +139,8 @@ async function init() {
       wTab.innerHTML = `<div class="error-msg">Error loading workflows: ${esc(phases.reason?.message || 'Unknown error')}</div>`;
     }
 
-    // Render snapshot selector
-    currentSnapshotId = null;
-    currentSnapshotStatus = null;
-    currentLog = null;
-    if (snapshots.status === 'fulfilled' && snapshots.value?.snapshots?.length) {
-      const selectorEl = buildSnapshotSelector(snapshots.value.snapshots, onSnapshotSelect);
-      wTab.insertBefore(selectorEl, wTab.firstChild);
-    }
+    // Render explorer
+    renderExplorer();
 
     // Render packages tab
     if (pkgResult.status === 'fulfilled') {
@@ -213,7 +182,7 @@ document.getElementById('workflowsTab').addEventListener('click', (e) => {
     const wfType = dataBtn.dataset.wfType;
     const wfId = dataBtn.dataset.wfId;
     const wfKey = `${wfType}_${wfId}`;
-    const wf = currentSnapshotStatus?.workflows?.[wfKey];
+    const wf = currentStatus?.workflows?.[wfKey];
     if (wf?.steps?.length && wf.phase) {
       const firstOutput = wf.steps.find(s => s.status === 'completed' && s.output);
       if (firstOutput) {
