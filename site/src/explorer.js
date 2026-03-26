@@ -116,7 +116,7 @@ export function buildExplorer(statusData) {
       const children = hdr.nextElementSibling;
       const expanded = children.style.display !== 'none';
       children.style.display = expanded ? 'none' : '';
-      hdr.classList.toggle('collapsed', !expanded);
+      hdr.classList.toggle('collapsed', expanded);
     });
   });
 
