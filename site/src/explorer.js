@@ -29,13 +29,14 @@ export function extractArtifacts(statusData) {
     if (!wf.steps) continue;
     for (const step of wf.steps) {
       if (step.status === 'completed' && step.output) {
+        const ext = step.name === 'html_report' ? '.html' : '.csv';
         artifacts.push({
           domain: step.output,
           phase: wf.phase,
           workflowId: wf.workflow_id,
           workflowKey: key,
           stepName: step.name,
-          path: `${wf.phase}/${wf.workflow_id}/${step.output}.csv`,
+          path: `${wf.phase}/${wf.workflow_id}/${step.output}${ext}`,
         });
       }
     }
@@ -160,17 +161,28 @@ export function buildExplorer(statusData) {
 
     viewer.innerHTML = '<div class="explorer-loading"><span class="spinner"></span> Loading…</div>';
     try {
-      const text = await loadArtifact(path);
-      viewer.innerHTML = '';
-      // Header
-      const header = document.createElement('div');
-      header.className = 'explorer-viewer-header';
-      header.innerHTML = `<span class="explorer-viewer-title">${dataIcon} ${esc(domain)}</span>`;
-      viewer.appendChild(header);
-      // Data table
-      const table = buildEnhancedTable(text);
-      table.classList.add('explorer-table-wrap');
-      viewer.appendChild(table);
+      if (path.endsWith('.html')) {
+        viewer.innerHTML = '';
+        const header = document.createElement('div');
+        header.className = 'explorer-viewer-header';
+        header.innerHTML = `<span class="explorer-viewer-title">${dataIcon} ${esc(domain)}</span>`;
+        viewer.appendChild(header);
+        const iframe = document.createElement('iframe');
+        iframe.src = `output/${path}`;
+        iframe.className = 'explorer-html-viewer';
+        iframe.style.cssText = 'width:100%;height:calc(100% - 40px);border:none;';
+        viewer.appendChild(iframe);
+      } else {
+        const text = await loadArtifact(path);
+        viewer.innerHTML = '';
+        const header = document.createElement('div');
+        header.className = 'explorer-viewer-header';
+        header.innerHTML = `<span class="explorer-viewer-title">${dataIcon} ${esc(domain)}</span>`;
+        viewer.appendChild(header);
+        const table = buildEnhancedTable(text);
+        table.classList.add('explorer-table-wrap');
+        viewer.appendChild(table);
+      }
     } catch (err) {
       viewer.innerHTML = `<div class="explorer-error">Could not load artifact: ${esc(err.message)}</div>`;
     }
