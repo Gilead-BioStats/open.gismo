@@ -64,12 +64,6 @@ describe('buildEnhancedTable', () => {
     expect(count.textContent).toContain('5 cols');
   });
 
-  it('shows distribution bars for numeric columns', () => {
-    const el = buildEnhancedTable(sampleCsv);
-    const distBars = el.querySelectorAll('.dist-bar');
-    expect(distBars.length).toBeGreaterThan(0);
-  });
-
   it('detects numeric columns and aligns them right', () => {
     const el = buildEnhancedTable(sampleCsv);
     const numCells = el.querySelectorAll('.dt-num');

@@ -223,12 +223,8 @@ export function buildEnhancedTable(csvText) {
     headers.forEach((h, ci) => {
       const icon = ci === sortCol ? SORT_ICONS[sortDir] : SORT_ICONS[SORT_NONE];
       const typeTag = colTypes[ci] === 'numeric' ? '<span class="dt-type-tag">#</span>' : '<span class="dt-type-tag">Aa</span>';
-      const distBar = colTypes[ci] === 'numeric'
-        ? buildDistBar(buildHistogram(allRows.map(r => r[ci] || '')))
-        : '';
       html += `<th data-col="${ci}" class="dt-sortable" title="${colStats[ci] ? esc(buildStatsTooltip(colStats[ci])) : ''}">`;
       html += `<div class="dt-th-content"><span class="dt-th-name">${esc(h)}</span>${typeTag}<span class="dt-sort-icon">${icon}</span></div>`;
-      html += distBar;
       html += '</th>';
     });
     html += '</tr></thead><tbody>';
