@@ -121,6 +121,15 @@ describe('parseCsv', () => {
     expect(rows[0].value).toBe('world');
   });
 
+  it('handles headers that shadow object prototype keys', () => {
+    const csv = `__proto__,value\nheader-safe,ok`;
+    const rows = parseCsv(csv);
+
+    expect(rows).toHaveLength(1);
+    expect(rows[0]['__proto__']).toBe('header-safe');
+    expect(rows[0].value).toBe('ok');
+  });
+
   it('returns empty array for single-line CSV (header only)', () => {
     expect(parseCsv('package,version')).toEqual([]);
   });

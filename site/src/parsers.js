@@ -58,13 +58,17 @@ export function parseWorkflow(text) {
 }
 
 export function parseCsv(text) {
-  const lines = text.trim().split('\n');
+  const trimmed = (text || '').trim();
+  if (!trimmed) return [];
+  const lines = trimmed.split('\n');
   if (lines.length < 2) return [];
   const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
   return lines.slice(1).map(line => {
     const vals = line.split(',').map(v => v.replace(/"/g, '').trim());
-    const row = {};
-    headers.forEach((h, i) => row[h] = vals[i] || '');
+    const row = Object.create(null);
+    headers.forEach((h, i) => {
+      row[h] = vals[i] || '';
+    });
     return row;
   });
 }
