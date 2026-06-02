@@ -31,6 +31,10 @@ export function makeCard(item, phaseIdx, compact) {
       .filter(Boolean).join(' ')
   );
 
+  // Activation state â€” treat missing/undefined as active/true
+  const isActive = item.Active !== false && item.Active !== 'false';
+  const hasRiskSignal = item.GenerateRiskSignal !== false && item.GenerateRiskSignal !== 'false';
+
   const hasOutputs = item._steps && item._steps.some(s => s.status === 'completed' && s.output);
   const dataBtn = hasOutputs
     ? `<button class="card-data-btn" data-wf-type="${esc(item.Type)}" data-wf-id="${esc(item.ID || item._stem)}" aria-label="View output data" title="View data">${dataSvg}</button>`
@@ -39,7 +43,8 @@ export function makeCard(item, phaseIdx, compact) {
   const actions = `<div class="card-actions"><a href="${ghUrl}" target="_blank" rel="noopener" class="card-link-btn" aria-label="Open in GitHub" title="Open in GitHub">${linkSvg}</a>${dataBtn}<button class="card-info-btn" data-path="${path}" aria-label="View workflow details" title="View details">${infoSvg}</button></div>`;
 
   if (compact) {
-    return `<div class="card card-compact" data-group="${esc(gl)}" data-type="${esc(at || ot)}" data-search="${search}">
+    const inactiveCls = isActive ? '' : ' card-inactive';
+    return `<div class="card card-compact${inactiveCls}" data-group="${esc(gl)}" data-type="${esc(at || ot)}" data-search="${search}">
       <div class="card-header"><div class="card-id" style="color:${color}">${id}</div>${actions}</div></div>`;
   }
 
@@ -51,6 +56,9 @@ export function makeCard(item, phaseIdx, compact) {
     const f = ot.replace(/^\./, '').toUpperCase();
     tags += `<span class="tag tag-${f.toLowerCase()}">${f}</span>`;
   }
+  // Activation badges â€” only shown when metric is not in default active/signal state
+  if (!isActive) tags += '<span class="tag tag-inactive">Inactive</span>';
+  else if (!hasRiskSignal) tags += '<span class="tag tag-monitoring">Monitoring Only</span>';
 
   let statusHtml = '';
   if (item._steps && item._steps.length) {
@@ -59,7 +67,8 @@ export function makeCard(item, phaseIdx, compact) {
     statusHtml = tmp.innerHTML;
   }
 
-  return `<div class="card" data-group="${esc(gl)}" data-type="${esc(at || ot)}" data-search="${search}">
+  const inactiveCls = isActive ? '' : ' card-inactive';
+  return `<div class="card${inactiveCls}" data-group="${esc(gl)}" data-type="${esc(at || ot)}" data-search="${search}">
     <div class="card-header"><div class="card-id" style="color:${color}">${id}</div>${actions}</div><div class="card-title">${desc}</div>
     <div class="card-tags">${tags}</div>${statusHtml}</div>`;
 }
