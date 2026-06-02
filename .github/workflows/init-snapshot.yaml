@@ -70,7 +70,7 @@ jobs:
         run: |
           Rscript -e '
             install.packages("pak", repos = "https://r-lib.github.io/p/pak/dev/")
-            pak::pkg_install("OpenRBQM/workr@dev")
+            pak::pkg_install("Gilead-BioStats/workr@dev")
           '
 
       - name: Create Package Snapshot

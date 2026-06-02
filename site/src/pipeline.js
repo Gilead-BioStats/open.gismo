@@ -2,7 +2,7 @@ import { PHASES } from './constants.js';
 import { esc } from './utils.js';
 import { buildStatusBadge, buildStatusSummary } from './status.js';
 
-const REPO_BASE = 'https://github.com/OpenRBQM/open.gismo';
+const REPO_BASE = 'https://github.com/Gilead-BioStats/open.gismo';
 
 function normalizePriority(item) {
   if (!item.Priority && item.Priority !== 0) item.Priority = '0';

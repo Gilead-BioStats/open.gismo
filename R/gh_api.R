@@ -14,7 +14,8 @@
 #' @keywords internal
 gh_api_request <- function(method, url, token, body = NULL) {
   req <- httr2::request(url)
-  req <- httr2::req_headers(req,
+  req <- httr2::req_headers(
+    req,
     Authorization = paste("Bearer", token),
     Accept = "application/vnd.github.v3+json"
   )
@@ -56,7 +57,9 @@ gh_api_request <- function(method, url, token, body = NULL) {
 gh_get_content <- function(repo, path, branch, token) {
   url <- sprintf(
     "https://api.github.com/repos/%s/contents/%s?ref=%s",
-    repo, path, branch
+    repo,
+    path,
+    branch
   )
   result <- gh_api_request("GET", url, token)
   decoded <- rawToChar(base64enc::base64decode(result$content))
@@ -77,7 +80,8 @@ gh_get_content <- function(repo, path, branch, token) {
 gh_put_content <- function(repo, path, content, message, branch, sha, token) {
   url <- sprintf(
     "https://api.github.com/repos/%s/contents/%s",
-    repo, path
+    repo,
+    path
   )
   encoded <- base64enc::base64encode(charToRaw(content))
   body <- list(
@@ -100,7 +104,9 @@ gh_put_content <- function(repo, path, content, message, branch, sha, token) {
 gh_list_directory <- function(repo, path, branch, token) {
   url <- sprintf(
     "https://api.github.com/repos/%s/contents/%s?ref=%s",
-    repo, path, branch
+    repo,
+    path,
+    branch
   )
   gh_api_request("GET", url, token)
 }

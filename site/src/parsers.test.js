@@ -106,12 +106,12 @@ steps:
 
 describe('parseCsv', () => {
   it('parses a simple CSV with headers and rows', () => {
-    const csv = `package,version,org\ngsm.core,2.2.0,Gilead\nworkr,1.0.0,OpenRBQM`;
+    const csv = `package,version,org\ngsm.core,2.2.0,Gilead\nworkr,1.0.0,Gilead-BioStats`;
     const rows = parseCsv(csv);
     expect(rows).toHaveLength(2);
     expect(rows[0].package).toBe('gsm.core');
     expect(rows[0].version).toBe('2.2.0');
-    expect(rows[1].org).toBe('OpenRBQM');
+    expect(rows[1].org).toBe('Gilead-BioStats');
   });
 
   it('strips double quotes from field values', () => {

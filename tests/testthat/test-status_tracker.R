@@ -81,9 +81,17 @@ test_that("build_status_json sets pipeline_status to 'failed' when all workflows
       workflow_type = "Metric",
       status = "failed",
       steps = list(
-        record_step_status("gsm.core::Input_Rate", "Analysis_Input", "completed"),
-        record_step_status("gsm.core::Analyze_NormalApprox", "Analysis_Summary", "failed",
-          error = "Error in Analyze_NormalApprox: insufficient data")
+        record_step_status(
+          "gsm.core::Input_Rate",
+          "Analysis_Input",
+          "completed"
+        ),
+        record_step_status(
+          "gsm.core::Analyze_NormalApprox",
+          "Analysis_Summary",
+          "failed",
+          error = "Error in Analyze_NormalApprox: insufficient data"
+        )
       )
     )
   )
@@ -95,8 +103,10 @@ test_that("build_status_json sets pipeline_status to 'failed' when all workflows
   expect_length(result$workflows$Metric_kri0001$steps, 2)
   expect_equal(result$workflows$Metric_kri0001$steps[[1]]$status, "completed")
   expect_equal(result$workflows$Metric_kri0001$steps[[2]]$status, "failed")
-  expect_equal(result$workflows$Metric_kri0001$steps[[2]]$error,
-    "Error in Analyze_NormalApprox: insufficient data")
+  expect_equal(
+    result$workflows$Metric_kri0001$steps[[2]]$error,
+    "Error in Analyze_NormalApprox: insufficient data"
+  )
 })
 
 test_that("build_status_json sets pipeline_status to 'partial' for mixed results", {
@@ -114,9 +124,17 @@ test_that("build_status_json sets pipeline_status to 'partial' for mixed results
       workflow_type = "Metric",
       status = "failed",
       steps = list(
-        record_step_status("gsm.core::Input_Rate", "Analysis_Input", "completed"),
-        record_step_status("gsm.core::Analyze_NormalApprox", "Analysis_Summary", "failed",
-          error = "Error in Analyze_NormalApprox: insufficient data")
+        record_step_status(
+          "gsm.core::Input_Rate",
+          "Analysis_Input",
+          "completed"
+        ),
+        record_step_status(
+          "gsm.core::Analyze_NormalApprox",
+          "Analysis_Summary",
+          "failed",
+          error = "Error in Analyze_NormalApprox: insufficient data"
+        )
       )
     )
   )
@@ -142,9 +160,17 @@ test_that("build_status_json records all workflows even when earlier ones fail",
       workflow_type = "Metric",
       status = "failed",
       steps = list(
-        record_step_status("gsm.core::Input_Rate", "Analysis_Input", "completed"),
-        record_step_status("gsm.core::Analyze_NormalApprox", "Analysis_Summary", "failed",
-          error = "Error: insufficient data")
+        record_step_status(
+          "gsm.core::Input_Rate",
+          "Analysis_Input",
+          "completed"
+        ),
+        record_step_status(
+          "gsm.core::Analyze_NormalApprox",
+          "Analysis_Summary",
+          "failed",
+          error = "Error: insufficient data"
+        )
       )
     ),
     Metric_kri0002 = list(
@@ -152,8 +178,16 @@ test_that("build_status_json records all workflows even when earlier ones fail",
       workflow_type = "Metric",
       status = "completed",
       steps = list(
-        record_step_status("gsm.core::Input_Rate", "Analysis_Input", "completed"),
-        record_step_status("gsm.core::Analyze_NormalApprox", "Analysis_Summary", "completed")
+        record_step_status(
+          "gsm.core::Input_Rate",
+          "Analysis_Input",
+          "completed"
+        ),
+        record_step_status(
+          "gsm.core::Analyze_NormalApprox",
+          "Analysis_Summary",
+          "completed"
+        )
       )
     ),
     Reporting_summary = list(
@@ -161,7 +195,11 @@ test_that("build_status_json records all workflows even when earlier ones fail",
       workflow_type = "Reporting",
       status = "completed",
       steps = list(
-        record_step_status("gsm.reporting::Build_Report", "Report_Output", "completed")
+        record_step_status(
+          "gsm.reporting::Build_Report",
+          "Report_Output",
+          "completed"
+        )
       )
     )
   )
@@ -185,10 +223,22 @@ test_that("build_status_json preserves step order within each workflow", {
       workflow_type = "Metric",
       status = "failed",
       steps = list(
-        record_step_status("gsm.core::Input_Rate", "Analysis_Input", "completed"),
-        record_step_status("gsm.core::Analyze_NormalApprox", "Analysis_Summary", "failed",
-          error = "Error: insufficient data"),
-        record_step_status("gsm.core::Flag_NormalApprox", "Flagged_Summary", "not_run")
+        record_step_status(
+          "gsm.core::Input_Rate",
+          "Analysis_Input",
+          "completed"
+        ),
+        record_step_status(
+          "gsm.core::Analyze_NormalApprox",
+          "Analysis_Summary",
+          "failed",
+          error = "Error: insufficient data"
+        ),
+        record_step_status(
+          "gsm.core::Flag_NormalApprox",
+          "Flagged_Summary",
+          "not_run"
+        )
       )
     )
   )

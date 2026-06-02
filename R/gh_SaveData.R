@@ -55,7 +55,11 @@ gh_SaveData <- function(lWorkflow, lConfig) {
         artifacts = artifact_names
       )
 
-      status_json <- jsonlite::toJSON(status_entry, auto_unbox = TRUE, pretty = TRUE)
+      status_json <- jsonlite::toJSON(
+        status_entry,
+        auto_unbox = TRUE,
+        pretty = TRUE
+      )
 
       gh_put_content(
         repo = lConfig$repo,
@@ -70,7 +74,8 @@ gh_SaveData <- function(lWorkflow, lConfig) {
     error = function(e) {
       warning(sprintf(
         "gh_SaveData: error updating status.json for workflow '%s': %s",
-        workflow_id, conditionMessage(e)
+        workflow_id,
+        conditionMessage(e)
       ))
     }
   )
@@ -83,11 +88,23 @@ gh_SaveData <- function(lWorkflow, lConfig) {
 
         # Construct output path: {snapshot_id}/output/{workflow_id}/{artifact_name}.csv
         output_path <- paste0(
-          lConfig$snapshot_id, "/output/", workflow_id, "/", artifact_name, ".csv"
+          lConfig$snapshot_id,
+          "/output/",
+          workflow_id,
+          "/",
+          artifact_name,
+          ".csv"
         )
 
         # Serialize data.frame to CSV string
-        csv_content <- paste(utils::capture.output(utils::write.csv(df, stdout(), row.names = FALSE)), collapse = "\n")
+        csv_content <- paste(
+          utils::capture.output(utils::write.csv(
+            df,
+            stdout(),
+            row.names = FALSE
+          )),
+          collapse = "\n"
+        )
 
         # Try to get existing file SHA for update; handle 404 for new files
         existing_sha <- tryCatch(
@@ -108,7 +125,9 @@ gh_SaveData <- function(lWorkflow, lConfig) {
         # Commit via gh_put_content
         commit_message <- sprintf(
           "Save %s from workflow %s (snapshot %s)",
-          artifact_name, workflow_id, lConfig$snapshot_id
+          artifact_name,
+          workflow_id,
+          lConfig$snapshot_id
         )
 
         gh_put_content(
@@ -124,7 +143,9 @@ gh_SaveData <- function(lWorkflow, lConfig) {
       error = function(e) {
         warning(sprintf(
           "gh_SaveData: error saving artifact '%s' for workflow '%s': %s",
-          artifact_name, workflow_id, conditionMessage(e)
+          artifact_name,
+          workflow_id,
+          conditionMessage(e)
         ))
       }
     )

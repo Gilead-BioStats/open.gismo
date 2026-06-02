@@ -4,7 +4,7 @@ import { buildPackagesTable } from './packages.js';
 describe('buildPackagesTable', () => {
   const sampleRows = [
     { package: 'gsm.core', version: '2.2.0', org: 'Gilead-BioStats', repository: 'https://github.com/Gilead-BioStats/gsm.core', sha: 'abc1234def5678' },
-    { package: 'workr', version: '1.0.0', org: 'OpenRBQM', repository: 'https://github.com/OpenRBQM/workr', sha: 'deadbeef1234' },
+    { package: 'workr', version: '1.0.0', org: 'Gilead-BioStats', repository: 'https://github.com/Gilead-BioStats/workr', sha: 'deadbeef1234' },
   ];
 
   it('renders a table with package name, version, repository link, and SHA link', () => {
@@ -20,7 +20,7 @@ describe('buildPackagesTable', () => {
   it('links each package to its repository URL', () => {
     const html = buildPackagesTable(sampleRows);
     expect(html).toContain('href="https://github.com/Gilead-BioStats/gsm.core"');
-    expect(html).toContain('href="https://github.com/OpenRBQM/workr"');
+    expect(html).toContain('href="https://github.com/Gilead-BioStats/workr"');
   });
 
   it('links each SHA to the commit URL', () => {

@@ -12,20 +12,28 @@
 # ---------------------------------------------------------------------------
 # When running via testthat::test_path(), go up two levels from tests/testthat/.
 workflows_dir <- file.path(
-  testthat::test_path(), "..", "..", ".github", "workflows"
+  testthat::test_path(),
+  "..",
+  "..",
+  ".github",
+  "workflows"
 )
 if (!dir.exists(workflows_dir)) {
   # Fallback: try from system.file (installed package context)
   workflows_dir <- file.path(
     system.file(package = "open.gismo"),
-    "..", ".github", "workflows"
+    "..",
+    ".github",
+    "workflows"
   )
 }
 
 # Skip all tests in this file if workflows dir is not available
 # (e.g., during R CMD check where .github/ is not in the installed package)
 if (!dir.exists(workflows_dir)) {
-  testthat::skip("GitHub Actions workflow files not available (not in source tree)")
+  testthat::skip(
+    "GitHub Actions workflow files not available (not in source tree)"
+  )
 }
 
 # Helper to read a workflow YAML
@@ -116,7 +124,8 @@ test_that("run-pipeline.yaml has required trigger inputs", {
   expect_true(!is.null(inputs), info = "Workflow must define inputs")
 
   input_names <- names(inputs)
-  expect_true("repo" %in% input_names || "snapshot_branch" %in% input_names,
+  expect_true(
+    "repo" %in% input_names || "snapshot_branch" %in% input_names,
     info = "Must have repo or snapshot_branch input"
   )
 })
@@ -139,10 +148,12 @@ test_that("run-pipeline.yaml installs R packages from manifest", {
   wf <- read_workflow("run-pipeline.yaml")
   runs <- get_run_steps(wf)
   # Should reference manifest or package installation
-  has_pkg_install <- any(grepl("install|manifest|pak|renv|pkgSnapshot", runs, ignore.case = TRUE))
-  expect_true(has_pkg_install,
-    info = "Must install R packages from manifest"
-  )
+  has_pkg_install <- any(grepl(
+    "install|manifest|pak|renv|pkgSnapshot",
+    runs,
+    ignore.case = TRUE
+  ))
+  expect_true(has_pkg_install, info = "Must install R packages from manifest")
 })
 
 test_that("run-pipeline.yaml calls gh_lConfig", {
@@ -179,14 +190,19 @@ test_that("run-pipeline.yaml calls gh_lConfig, MakeWorkflowList, RunWorkflows in
   pos_runwf <- regexpr("RunWorkflows", all_runs)
 
   expect_true(pos_lconfig > 0, info = "gh_lConfig must appear in run steps")
-  expect_true(pos_makewf > 0, info = "MakeWorkflowList must appear in run steps")
+  expect_true(
+    pos_makewf > 0,
+    info = "MakeWorkflowList must appear in run steps"
+  )
   expect_true(pos_runwf > 0, info = "RunWorkflows must appear in run steps")
 
   # gh_lConfig before MakeWorkflowList before RunWorkflows
-  expect_true(pos_lconfig < pos_makewf,
+  expect_true(
+    pos_lconfig < pos_makewf,
     info = "gh_lConfig must be called before MakeWorkflowList"
   )
-  expect_true(pos_makewf < pos_runwf,
+  expect_true(
+    pos_makewf < pos_runwf,
     info = "MakeWorkflowList must be called before RunWorkflows"
   )
 })
@@ -202,8 +218,13 @@ test_that("run-pipeline.yaml has checkout step", {
 test_that("run-pipeline.yaml commits output artifacts", {
   wf <- read_workflow("run-pipeline.yaml")
   runs <- get_run_steps(wf)
-  has_commit <- any(grepl("git commit|git push|status\\.json|log\\.json", runs, ignore.case = TRUE))
-  expect_true(has_commit,
+  has_commit <- any(grepl(
+    "git commit|git push|status\\.json|log\\.json",
+    runs,
+    ignore.case = TRUE
+  ))
+  expect_true(
+    has_commit,
     info = "Must commit output artifacts (status.json, log.json, etc.)"
   )
 })
@@ -234,7 +255,10 @@ test_that("create-snapshot.yaml has required trigger inputs", {
   input_names <- names(inputs)
   # Should have inputs for data_branch or input_data_version or package_snapshot
   expect_true(
-    any(c("data_branch", "input_data_version", "package_snapshot") %in% input_names),
+    any(
+      c("data_branch", "input_data_version", "package_snapshot") %in%
+        input_names
+    ),
     info = "Must have data_branch, input_data_version, or package_snapshot input"
   )
 })
@@ -265,9 +289,7 @@ test_that("create-snapshot.yaml commits snapshots.json", {
   wf <- read_workflow("create-snapshot.yaml")
   runs <- get_run_steps(wf)
   has_snapshots_commit <- any(grepl("snapshots\\.json", runs))
-  expect_true(has_snapshots_commit,
-    info = "Must commit snapshots.json update"
-  )
+  expect_true(has_snapshots_commit, info = "Must commit snapshots.json update")
 })
 
 test_that("create-snapshot.yaml has checkout step", {
@@ -328,7 +350,8 @@ test_that("build-site.yaml has jobs section", {
 test_that("build-site.yaml triggers on pushes to demo", {
   wf <- read_workflow("build-site.yaml")
   push_branches <- wf[["on"]][["push"]][["branches"]]
-  expect_true("demo" %in% push_branches,
+  expect_true(
+    "demo" %in% push_branches,
     info = "Must trigger on pushes to the demo branch"
   )
 })
@@ -336,15 +359,24 @@ test_that("build-site.yaml triggers on pushes to demo", {
 test_that("build-site.yaml checks out the demo branch explicitly", {
   wf <- read_workflow("build-site.yaml")
   steps <- get_job_steps(wf)
-  checkout_steps <- Filter(function(step) identical(step[["uses"]], "actions/checkout@v4"), steps)
-  expect_true(length(checkout_steps) >= 1,
+  checkout_steps <- Filter(
+    function(step) identical(step[["uses"]], "actions/checkout@v4"),
+    steps
+  )
+  expect_true(
+    length(checkout_steps) >= 1,
     info = "Must use actions/checkout@v4"
   )
-  refs <- vapply(checkout_steps, function(step) {
-    with <- step[["with"]]
-    if (is.null(with) || is.null(with[["ref"]])) "" else with[["ref"]]
-  }, character(1))
-  expect_true(any(refs == "demo"),
+  refs <- vapply(
+    checkout_steps,
+    function(step) {
+      with <- step[["with"]]
+      if (is.null(with) || is.null(with[["ref"]])) "" else with[["ref"]]
+    },
+    character(1)
+  )
+  expect_true(
+    any(refs == "demo"),
     info = "Must check out the demo branch for deployment"
   )
 })
@@ -357,7 +389,8 @@ test_that("build-site.yaml validates required demo site artifacts", {
     any(grepl("test -d workflows", runs)) &&
     any(grepl("test -d output", runs)) &&
     any(grepl("test -f manifest\\.csv", runs))
-  expect_true(has_index_check,
+  expect_true(
+    has_index_check,
     info = "Must validate the built site and required data artifacts on demo"
   )
 })
@@ -368,23 +401,29 @@ test_that("build-site.yaml deploys to GitHub Pages", {
   has_pages_deploy <- has_action(wf, "actions/deploy-pages") ||
     has_action(wf, "actions/upload-pages-artifact") ||
     has_run_pattern(wf, "gh-pages|github-pages|deploy")
-  expect_true(has_pages_deploy,
-    info = "Must deploy to GitHub Pages"
-  )
+  expect_true(has_pages_deploy, info = "Must deploy to GitHub Pages")
 })
 
 test_that("build-site.yaml uploads the demo branch root", {
   wf <- read_workflow("build-site.yaml")
   steps <- get_job_steps(wf)
-  upload_steps <- Filter(function(step) identical(step[["uses"]], "actions/upload-pages-artifact@v3"), steps)
-  expect_true(length(upload_steps) >= 1,
-    info = "Must upload a Pages artifact"
+  upload_steps <- Filter(
+    function(step) {
+      identical(step[["uses"]], "actions/upload-pages-artifact@v3")
+    },
+    steps
   )
-  paths <- vapply(upload_steps, function(step) {
-    with <- step[["with"]]
-    if (is.null(with) || is.null(with[["path"]])) "" else with[["path"]]
-  }, character(1))
-  expect_true(any(paths == "."),
+  expect_true(length(upload_steps) >= 1, info = "Must upload a Pages artifact")
+  paths <- vapply(
+    upload_steps,
+    function(step) {
+      with <- step[["with"]]
+      if (is.null(with) || is.null(with[["path"]])) "" else with[["path"]]
+    },
+    character(1)
+  )
+  expect_true(
+    any(paths == "."),
     info = "Must upload the demo branch root for deployment"
   )
 })
