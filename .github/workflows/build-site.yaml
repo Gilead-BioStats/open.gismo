@@ -11,13 +11,8 @@ permissions:
   pages: write
   id-token: write
 
-concurrency:
-  group: pages
-  cancel-in-progress: false
-
 jobs:
   deploy-demo:
-    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -44,62 +39,6 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-
-  deploy-test:
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}test/
-    steps:
-      - name: Checkout source branch
-        uses: actions/checkout@v4
-        with:
-          path: source
-          fetch-depth: 1
-
-      - name: Checkout demo branch (production site + data)
-        uses: actions/checkout@v4
-        with:
-          ref: demo
-          path: production
-          fetch-depth: 1
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies and build site
-        working-directory: source/site
-        run: |
-          npm ci
-          npm run build
-
-      - name: Assemble deployment with test site
-        run: |
-          cp -r production deploy
-          mkdir -p deploy/test
-          cp source/index.html deploy/test/
-          cp production/_index.json deploy/test/
-          cp production/manifest.csv deploy/test/
-          cp -r production/workflows deploy/test/
-          cp -r production/output deploy/test/
-          [ -f production/status.json ] && cp production/status.json deploy/test/ || true
-          [ -f production/log.json ] && cp production/log.json deploy/test/ || true
-          [ -f production/snapshots.json ] && cp production/snapshots.json deploy/test/ || true
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: deploy
 
       - name: Deploy to GitHub Pages
         id: deployment
