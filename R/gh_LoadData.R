@@ -114,8 +114,15 @@ gh_LoadData <- function(lWorkflow, lConfig, lData) {
         branch = lConfig$branch,
         token = lConfig$token
       )
-      snapshots_data <- jsonlite::fromJSON(result$content, simplifyVector = FALSE)
-      all_ids <- vapply(snapshots_data$snapshots, function(s) s$snapshot_id, character(1))
+      snapshots_data <- jsonlite::fromJSON(
+        result$content,
+        simplifyVector = FALSE
+      )
+      all_ids <- vapply(
+        snapshots_data$snapshots,
+        function(s) s$snapshot_id,
+        character(1)
+      )
 
       # Filter out the current snapshot and get previous ones
       prev <- all_ids[all_ids != lConfig$snapshot_id]

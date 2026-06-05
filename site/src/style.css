@@ -307,6 +307,21 @@ body {
 }
 .card-data-btn:hover { opacity: 1; }
 
+/* Inactive card — greyed out */
+.card-inactive {
+  opacity: 0.45;
+  border-color: var(--border);
+  background: rgba(255,255,255,0.01);
+}
+.card-inactive:hover {
+  opacity: 0.65;
+  transform: none;
+}
+
+/* Activation status badges */
+.tag-inactive    { background: rgba(148,163,184,0.15); color: var(--text-dim); }
+.tag-monitoring  { background: rgba(250,204,21,0.12); color: #facc15; }
+
 /* ── Enhanced Data Table ───────────────────────────────────────────── */
 .dt-root { display: flex; flex-direction: column; height: 100%; }
 .dt-toolbar {

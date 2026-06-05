@@ -23,7 +23,15 @@ test_that("create_project_snapshot returns a new snapshot_id", {
         list(content = content, sha = "sha_index")
       }
     },
-    gh_put_content = function(repo, path, content, message, branch, sha, token) {
+    gh_put_content = function(
+      repo,
+      path,
+      content,
+      message,
+      branch,
+      sha,
+      token
+    ) {
       list(content = list(sha = "new_sha"), commit = list(sha = "commit_sha"))
     }
   )
@@ -51,7 +59,15 @@ test_that("create_project_snapshot allocates ps-001 for first snapshot", {
         list(content = content, sha = "sha_index")
       }
     },
-    gh_put_content = function(repo, path, content, message, branch, sha, token) {
+    gh_put_content = function(
+      repo,
+      path,
+      content,
+      message,
+      branch,
+      sha,
+      token
+    ) {
       list(content = list(sha = "new_sha"), commit = list(sha = "commit_sha"))
     }
   )
@@ -74,17 +90,33 @@ test_that("create_project_snapshot allocates sequential IDs", {
         existing <- list(
           project_id = "my-study",
           snapshots = list(
-            list(snapshot_id = "ps-001", created_at = "2025-01-15T10:30:00Z",
-                 input_data_version = "v1", package_snapshot = "ss-dev"),
-            list(snapshot_id = "ps-002", created_at = "2025-02-15T10:30:00Z",
-                 input_data_version = "v2", package_snapshot = "ss-dev")
+            list(
+              snapshot_id = "ps-001",
+              created_at = "2025-01-15T10:30:00Z",
+              input_data_version = "v1",
+              package_snapshot = "ss-dev"
+            ),
+            list(
+              snapshot_id = "ps-002",
+              created_at = "2025-02-15T10:30:00Z",
+              input_data_version = "v2",
+              package_snapshot = "ss-dev"
+            )
           )
         )
         content <- jsonlite::toJSON(existing, auto_unbox = TRUE)
         list(content = content, sha = "sha_index")
       }
     },
-    gh_put_content = function(repo, path, content, message, branch, sha, token) {
+    gh_put_content = function(
+      repo,
+      path,
+      content,
+      message,
+      branch,
+      sha,
+      token
+    ) {
       list(content = list(sha = "new_sha"), commit = list(sha = "commit_sha"))
     }
   )
@@ -113,9 +145,18 @@ test_that("create_project_snapshot creates metadata.json with correct fields", {
         list(content = content, sha = "sha_index")
       }
     },
-    gh_put_content = function(repo, path, content, message, branch, sha, token) {
+    gh_put_content = function(
+      repo,
+      path,
+      content,
+      message,
+      branch,
+      sha,
+      token
+    ) {
       captured_puts[[length(captured_puts) + 1]] <<- list(
-        path = path, content = content
+        path = path,
+        content = content
       )
       list(content = list(sha = "new_sha"), commit = list(sha = "commit_sha"))
     }
@@ -130,7 +171,10 @@ test_that("create_project_snapshot creates metadata.json with correct fields", {
   )
 
   # Find the metadata.json put
-  metadata_put <- Filter(function(p) grepl("metadata\\.json", p$path), captured_puts)
+  metadata_put <- Filter(
+    function(p) grepl("metadata\\.json", p$path),
+    captured_puts
+  )
   expect_true(length(metadata_put) > 0)
 
   metadata <- jsonlite::fromJSON(metadata_put[[1]]$content)
@@ -153,9 +197,18 @@ test_that("create_project_snapshot updates snapshots.json index", {
         list(content = content, sha = "sha_index")
       }
     },
-    gh_put_content = function(repo, path, content, message, branch, sha, token) {
+    gh_put_content = function(
+      repo,
+      path,
+      content,
+      message,
+      branch,
+      sha,
+      token
+    ) {
       captured_puts[[length(captured_puts) + 1]] <<- list(
-        path = path, content = content
+        path = path,
+        content = content
       )
       list(content = list(sha = "new_sha"), commit = list(sha = "commit_sha"))
     }
@@ -170,7 +223,10 @@ test_that("create_project_snapshot updates snapshots.json index", {
   )
 
   # Find the snapshots.json put
-  index_put <- Filter(function(p) grepl("snapshots\\.json", p$path), captured_puts)
+  index_put <- Filter(
+    function(p) grepl("snapshots\\.json", p$path),
+    captured_puts
+  )
   expect_true(length(index_put) > 0)
 
   index <- jsonlite::fromJSON(index_put[[1]]$content)
@@ -187,7 +243,15 @@ test_that("create_project_snapshot handles missing snapshots.json (new project)"
         ))
       }
     },
-    gh_put_content = function(repo, path, content, message, branch, sha, token) {
+    gh_put_content = function(
+      repo,
+      path,
+      content,
+      message,
+      branch,
+      sha,
+      token
+    ) {
       list(content = list(sha = "new_sha"), commit = list(sha = "commit_sha"))
     }
   )
@@ -214,10 +278,18 @@ test_that("list_project_snapshots returns data frame with correct columns", {
       snapshots_data <- list(
         project_id = "my-study",
         snapshots = list(
-          list(snapshot_id = "ps-001", created_at = "2025-01-15T10:30:00Z",
-               input_data_version = "2025-Q1", package_snapshot = "ss-dev"),
-          list(snapshot_id = "ps-002", created_at = "2025-02-15T10:30:00Z",
-               input_data_version = "2025-Q2", package_snapshot = "ss-dev")
+          list(
+            snapshot_id = "ps-001",
+            created_at = "2025-01-15T10:30:00Z",
+            input_data_version = "2025-Q1",
+            package_snapshot = "ss-dev"
+          ),
+          list(
+            snapshot_id = "ps-002",
+            created_at = "2025-02-15T10:30:00Z",
+            input_data_version = "2025-Q2",
+            package_snapshot = "ss-dev"
+          )
         )
       )
       content <- jsonlite::toJSON(snapshots_data, auto_unbox = TRUE)
@@ -244,10 +316,18 @@ test_that("list_project_snapshots returns correct number of entries", {
       snapshots_data <- list(
         project_id = "my-study",
         snapshots = list(
-          list(snapshot_id = "ps-001", created_at = "2025-01-15T10:30:00Z",
-               input_data_version = "v1", package_snapshot = "ss-dev"),
-          list(snapshot_id = "ps-002", created_at = "2025-02-15T10:30:00Z",
-               input_data_version = "v2", package_snapshot = "ss-demo")
+          list(
+            snapshot_id = "ps-001",
+            created_at = "2025-01-15T10:30:00Z",
+            input_data_version = "v1",
+            package_snapshot = "ss-dev"
+          ),
+          list(
+            snapshot_id = "ps-002",
+            created_at = "2025-02-15T10:30:00Z",
+            input_data_version = "v2",
+            package_snapshot = "ss-demo"
+          )
         )
       )
       content <- jsonlite::toJSON(snapshots_data, auto_unbox = TRUE)
@@ -315,8 +395,12 @@ test_that("get_snapshot_status returns workflow statuses", {
         workflow_type = "Mapping",
         status = "completed",
         steps = list(
-          list(name = "gsm.mapping::AE_Map_Raw", output = "Mapped_AE",
-               status = "completed", error = NULL)
+          list(
+            name = "gsm.mapping::AE_Map_Raw",
+            output = "Mapped_AE",
+            status = "completed",
+            error = NULL
+          )
         )
       ),
       Metric_kri0001 = list(
@@ -324,10 +408,18 @@ test_that("get_snapshot_status returns workflow statuses", {
         workflow_type = "Metric",
         status = "failed",
         steps = list(
-          list(name = "gsm.core::Input_Rate", output = "Analysis_Input",
-               status = "completed", error = NULL),
-          list(name = "gsm.core::Analyze_NormalApprox", output = "Analysis_Summary",
-               status = "failed", error = "insufficient data")
+          list(
+            name = "gsm.core::Input_Rate",
+            output = "Analysis_Input",
+            status = "completed",
+            error = NULL
+          ),
+          list(
+            name = "gsm.core::Analyze_NormalApprox",
+            output = "Analysis_Summary",
+            status = "failed",
+            error = "insufficient data"
+          )
         )
       )
     )
@@ -363,8 +455,12 @@ test_that("get_snapshot_status returns per-step status details", {
         workflow_type = "Mapping",
         status = "completed",
         steps = list(
-          list(name = "gsm.mapping::AE_Map_Raw", output = "Mapped_AE",
-               status = "completed", error = NULL)
+          list(
+            name = "gsm.mapping::AE_Map_Raw",
+            output = "Mapped_AE",
+            status = "completed",
+            error = NULL
+          )
         )
       )
     )
@@ -397,8 +493,12 @@ test_that("get_snapshot_status includes error messages for failed steps", {
         workflow_type = "Metric",
         status = "failed",
         steps = list(
-          list(name = "gsm.core::Analyze_NormalApprox", output = "Analysis_Summary",
-               status = "failed", error = "insufficient data for analysis")
+          list(
+            name = "gsm.core::Analyze_NormalApprox",
+            output = "Analysis_Summary",
+            status = "failed",
+            error = "insufficient data for analysis"
+          )
         )
       )
     )
@@ -425,7 +525,11 @@ test_that("get_snapshot_status fetches from correct path", {
     gh_get_content = function(repo, path, branch, token) {
       captured_path <<- path
       content <- jsonlite::toJSON(
-        list(snapshot_id = "ps-003", pipeline_status = "completed", workflows = list()),
+        list(
+          snapshot_id = "ps-003",
+          pipeline_status = "completed",
+          workflows = list()
+        ),
         auto_unbox = TRUE
       )
       list(content = content, sha = "sha_status")
@@ -453,10 +557,18 @@ test_that("LoadData falls back to previous snapshot when domain missing in curre
         snapshots_data <- list(
           project_id = "my-study",
           snapshots = list(
-            list(snapshot_id = "ps-001", created_at = "2025-01-15T10:30:00Z",
-                 input_data_version = "v1", package_snapshot = "ss-dev"),
-            list(snapshot_id = "ps-002", created_at = "2025-02-15T10:30:00Z",
-                 input_data_version = "v2", package_snapshot = "ss-dev")
+            list(
+              snapshot_id = "ps-001",
+              created_at = "2025-01-15T10:30:00Z",
+              input_data_version = "v1",
+              package_snapshot = "ss-dev"
+            ),
+            list(
+              snapshot_id = "ps-002",
+              created_at = "2025-02-15T10:30:00Z",
+              input_data_version = "v2",
+              package_snapshot = "ss-dev"
+            )
           )
         )
         content <- jsonlite::toJSON(snapshots_data, auto_unbox = TRUE)
@@ -522,10 +634,18 @@ test_that("Current snapshot data takes precedence over previous snapshots", {
         snapshots_data <- list(
           project_id = "my-study",
           snapshots = list(
-            list(snapshot_id = "ps-001", created_at = "2025-01-15T10:30:00Z",
-                 input_data_version = "v1", package_snapshot = "ss-dev"),
-            list(snapshot_id = "ps-002", created_at = "2025-02-15T10:30:00Z",
-                 input_data_version = "v2", package_snapshot = "ss-dev")
+            list(
+              snapshot_id = "ps-001",
+              created_at = "2025-01-15T10:30:00Z",
+              input_data_version = "v1",
+              package_snapshot = "ss-dev"
+            ),
+            list(
+              snapshot_id = "ps-002",
+              created_at = "2025-02-15T10:30:00Z",
+              input_data_version = "v2",
+              package_snapshot = "ss-dev"
+            )
           )
         )
         content <- jsonlite::toJSON(snapshots_data, auto_unbox = TRUE)
@@ -589,12 +709,24 @@ test_that("Snapshot inheritance checks previous snapshots in reverse order", {
         snapshots_data <- list(
           project_id = "my-study",
           snapshots = list(
-            list(snapshot_id = "ps-001", created_at = "2025-01-15T10:30:00Z",
-                 input_data_version = "v1", package_snapshot = "ss-dev"),
-            list(snapshot_id = "ps-002", created_at = "2025-02-15T10:30:00Z",
-                 input_data_version = "v2", package_snapshot = "ss-dev"),
-            list(snapshot_id = "ps-003", created_at = "2025-03-15T10:30:00Z",
-                 input_data_version = "v3", package_snapshot = "ss-dev")
+            list(
+              snapshot_id = "ps-001",
+              created_at = "2025-01-15T10:30:00Z",
+              input_data_version = "v1",
+              package_snapshot = "ss-dev"
+            ),
+            list(
+              snapshot_id = "ps-002",
+              created_at = "2025-02-15T10:30:00Z",
+              input_data_version = "v2",
+              package_snapshot = "ss-dev"
+            ),
+            list(
+              snapshot_id = "ps-003",
+              created_at = "2025-03-15T10:30:00Z",
+              input_data_version = "v3",
+              package_snapshot = "ss-dev"
+            )
           )
         )
         content <- jsonlite::toJSON(snapshots_data, auto_unbox = TRUE)
@@ -655,10 +787,18 @@ test_that("Snapshot inheritance logs error when previous snapshot unavailable", 
         snapshots_data <- list(
           project_id = "my-study",
           snapshots = list(
-            list(snapshot_id = "ps-001", created_at = "2025-01-15T10:30:00Z",
-                 input_data_version = "v1", package_snapshot = "ss-dev"),
-            list(snapshot_id = "ps-002", created_at = "2025-02-15T10:30:00Z",
-                 input_data_version = "v2", package_snapshot = "ss-dev")
+            list(
+              snapshot_id = "ps-001",
+              created_at = "2025-01-15T10:30:00Z",
+              input_data_version = "v1",
+              package_snapshot = "ss-dev"
+            ),
+            list(
+              snapshot_id = "ps-002",
+              created_at = "2025-02-15T10:30:00Z",
+              input_data_version = "v2",
+              package_snapshot = "ss-dev"
+            )
           )
         )
         content <- jsonlite::toJSON(snapshots_data, auto_unbox = TRUE)

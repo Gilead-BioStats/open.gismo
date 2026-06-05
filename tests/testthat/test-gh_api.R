@@ -20,7 +20,12 @@ test_that("gh_get_content returns decoded file content on success", {
     }
   )
 
-  result <- gh_get_content("owner/repo", "path/to/file.csv", "main", "fake-token")
+  result <- gh_get_content(
+    "owner/repo",
+    "path/to/file.csv",
+    "main",
+    "fake-token"
+  )
   expect_equal(result$content, "hello world")
   expect_equal(result$sha, "abc123")
 })
@@ -29,7 +34,9 @@ test_that("gh_get_content errors with informative message on 404", {
   local_mocked_bindings(
     gh_api_request = function(method, url, token, ...) {
       stop(structure(
-        list(message = "GitHub API error (404): Not Found [owner/repo path/to/file.csv]"),
+        list(
+          message = "GitHub API error (404): Not Found [owner/repo path/to/file.csv]"
+        ),
         class = c("gh_api_error", "error", "condition")
       ))
     }
@@ -45,7 +52,9 @@ test_that("gh_get_content errors with informative message on 403", {
   local_mocked_bindings(
     gh_api_request = function(method, url, token, ...) {
       stop(structure(
-        list(message = "GitHub API error (403): Forbidden [owner/repo path/to/file.csv]"),
+        list(
+          message = "GitHub API error (403): Forbidden [owner/repo path/to/file.csv]"
+        ),
         class = c("gh_api_error", "error", "condition")
       ))
     }
@@ -61,7 +70,9 @@ test_that("gh_get_content errors with informative message on 5xx", {
   local_mocked_bindings(
     gh_api_request = function(method, url, token, ...) {
       stop(structure(
-        list(message = "GitHub API error (500): Internal Server Error [owner/repo path/to/file.csv]"),
+        list(
+          message = "GitHub API error (500): Internal Server Error [owner/repo path/to/file.csv]"
+        ),
         class = c("gh_api_error", "error", "condition")
       ))
     }
@@ -117,7 +128,15 @@ test_that("gh_put_content base64-encodes the content before sending", {
     }
   )
 
-  gh_put_content("owner/repo", "file.csv", "hello", "msg", "main", "sha0", "tok")
+  gh_put_content(
+    "owner/repo",
+    "file.csv",
+    "hello",
+    "msg",
+    "main",
+    "sha0",
+    "tok"
+  )
 
   expected_b64 <- base64enc::base64encode(charToRaw("hello"))
   expect_equal(captured_body$content, expected_b64)
@@ -127,14 +146,24 @@ test_that("gh_put_content errors with informative message on 404", {
   local_mocked_bindings(
     gh_api_request = function(method, url, token, body, ...) {
       stop(structure(
-        list(message = "GitHub API error (404): Not Found [owner/repo path/to/file.csv]"),
+        list(
+          message = "GitHub API error (404): Not Found [owner/repo path/to/file.csv]"
+        ),
         class = c("gh_api_error", "error", "condition")
       ))
     }
   )
 
   expect_error(
-    gh_put_content("owner/repo", "path/to/file.csv", "data", "msg", "main", "sha1", "fake-token"),
+    gh_put_content(
+      "owner/repo",
+      "path/to/file.csv",
+      "data",
+      "msg",
+      "main",
+      "sha1",
+      "fake-token"
+    ),
     "404"
   )
 })
@@ -143,14 +172,24 @@ test_that("gh_put_content errors with informative message on 409 conflict", {
   local_mocked_bindings(
     gh_api_request = function(method, url, token, body, ...) {
       stop(structure(
-        list(message = "GitHub API error (409): Conflict [owner/repo path/to/file.csv]"),
+        list(
+          message = "GitHub API error (409): Conflict [owner/repo path/to/file.csv]"
+        ),
         class = c("gh_api_error", "error", "condition")
       ))
     }
   )
 
   expect_error(
-    gh_put_content("owner/repo", "path/to/file.csv", "data", "msg", "main", "sha1", "fake-token"),
+    gh_put_content(
+      "owner/repo",
+      "path/to/file.csv",
+      "data",
+      "msg",
+      "main",
+      "sha1",
+      "fake-token"
+    ),
     "409"
   )
 })
@@ -159,14 +198,24 @@ test_that("gh_put_content errors with informative message on 5xx", {
   local_mocked_bindings(
     gh_api_request = function(method, url, token, body, ...) {
       stop(structure(
-        list(message = "GitHub API error (500): Internal Server Error [owner/repo path/to/file.csv]"),
+        list(
+          message = "GitHub API error (500): Internal Server Error [owner/repo path/to/file.csv]"
+        ),
         class = c("gh_api_error", "error", "condition")
       ))
     }
   )
 
   expect_error(
-    gh_put_content("owner/repo", "path/to/file.csv", "data", "msg", "main", "sha1", "fake-token"),
+    gh_put_content(
+      "owner/repo",
+      "path/to/file.csv",
+      "data",
+      "msg",
+      "main",
+      "sha1",
+      "fake-token"
+    ),
     "500"
   )
 })
@@ -179,8 +228,18 @@ test_that("gh_list_directory returns list of file entries on success", {
   local_mocked_bindings(
     gh_api_request = function(method, url, token, ...) {
       list(
-        list(name = "file1.csv", path = "data/file1.csv", type = "file", sha = "sha1"),
-        list(name = "file2.csv", path = "data/file2.csv", type = "file", sha = "sha2"),
+        list(
+          name = "file1.csv",
+          path = "data/file1.csv",
+          type = "file",
+          sha = "sha1"
+        ),
+        list(
+          name = "file2.csv",
+          path = "data/file2.csv",
+          type = "file",
+          sha = "sha2"
+        ),
         list(name = "subdir", path = "data/subdir", type = "dir", sha = "sha3")
       )
     }
@@ -208,7 +267,9 @@ test_that("gh_list_directory errors with informative message on 404", {
   local_mocked_bindings(
     gh_api_request = function(method, url, token, ...) {
       stop(structure(
-        list(message = "GitHub API error (404): Not Found [owner/repo nonexistent]"),
+        list(
+          message = "GitHub API error (404): Not Found [owner/repo nonexistent]"
+        ),
         class = c("gh_api_error", "error", "condition")
       ))
     }
@@ -224,7 +285,9 @@ test_that("gh_list_directory errors with informative message on 403", {
   local_mocked_bindings(
     gh_api_request = function(method, url, token, ...) {
       stop(structure(
-        list(message = "GitHub API error (403): Forbidden [owner/repo private-dir]"),
+        list(
+          message = "GitHub API error (403): Forbidden [owner/repo private-dir]"
+        ),
         class = c("gh_api_error", "error", "condition")
       ))
     }
@@ -240,7 +303,9 @@ test_that("gh_list_directory errors with informative message on 5xx", {
   local_mocked_bindings(
     gh_api_request = function(method, url, token, ...) {
       stop(structure(
-        list(message = "GitHub API error (500): Internal Server Error [owner/repo data]"),
+        list(
+          message = "GitHub API error (500): Internal Server Error [owner/repo data]"
+        ),
         class = c("gh_api_error", "error", "condition")
       ))
     }

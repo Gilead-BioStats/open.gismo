@@ -16,7 +16,13 @@
 #'
 #' @return Character. The new snapshot_id (e.g., "ps-001").
 #' @export
-create_project_snapshot <- function(repo, branch, input_data_version, package_snapshot, token) {
+create_project_snapshot <- function(
+  repo,
+  branch,
+  input_data_version,
+  package_snapshot,
+  token
+) {
   # Fetch existing snapshots.json (handle 404 for new projects)
   existing <- tryCatch(
     {
@@ -45,9 +51,13 @@ create_project_snapshot <- function(repo, branch, input_data_version, package_sn
   if (length(snapshots_list) == 0) {
     next_num <- 1
   } else {
-    existing_nums <- vapply(snapshots_list, function(s) {
-      as.integer(sub("^ps-", "", s$snapshot_id))
-    }, integer(1))
+    existing_nums <- vapply(
+      snapshots_list,
+      function(s) {
+        as.integer(sub("^ps-", "", s$snapshot_id))
+      },
+      integer(1)
+    )
     next_num <- max(existing_nums) + 1
   }
 
@@ -87,7 +97,11 @@ create_project_snapshot <- function(repo, branch, input_data_version, package_sn
   snapshots_list[[length(snapshots_list) + 1]] <- new_entry
   existing$data$snapshots <- snapshots_list
 
-  index_json <- jsonlite::toJSON(existing$data, auto_unbox = TRUE, pretty = TRUE)
+  index_json <- jsonlite::toJSON(
+    existing$data,
+    auto_unbox = TRUE,
+    pretty = TRUE
+  )
 
   gh_put_content(
     repo = repo,
@@ -147,15 +161,18 @@ list_project_snapshots <- function(repo, branch, token) {
     return(empty_df)
   }
 
-  do.call(rbind, lapply(snapshots_list, function(s) {
-    data.frame(
-      snapshot_id = s$snapshot_id %||% NA_character_,
-      created_at = s$created_at %||% NA_character_,
-      input_data_version = s$input_data_version %||% NA_character_,
-      package_snapshot = s$package_snapshot %||% NA_character_,
-      stringsAsFactors = FALSE
-    )
-  }))
+  do.call(
+    rbind,
+    lapply(snapshots_list, function(s) {
+      data.frame(
+        snapshot_id = s$snapshot_id %||% NA_character_,
+        created_at = s$created_at %||% NA_character_,
+        input_data_version = s$input_data_version %||% NA_character_,
+        package_snapshot = s$package_snapshot %||% NA_character_,
+        stringsAsFactors = FALSE
+      )
+    })
+  )
 }
 
 #' Get execution status for a Project Snapshot

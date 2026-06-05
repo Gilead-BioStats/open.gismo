@@ -7,13 +7,13 @@ open.gismo is an end-to-end platform for running workflows in R using the {workr
 Install the package from GitHub:
 
 ```r
-pak::pak("OpenRBQM/open.gismo")
+pak::pak("Gilead-BioStats/open.gismo")
 ```
 
 Or with remotes:
 
 ```r
-remotes::install_github("OpenRBQM/open.gismo")
+remotes::install_github("Gilead-BioStats/open.gismo")
 ```
 
 # Design
@@ -41,7 +41,7 @@ The database stores all data needed to run the workflows. Many possible implemen
 The analytics engine loads all needed packages and executes the workflows using {workr}. Approaches include: 
 
 - User-Run Scripts - **Current State** 
-- GitHub Actions - **Future State** {workr}-based actions with custom `lConfig.saveData` and `lConfig.loadData` hooks in [`workr::RunWorkflow`](https://github.com/OpenRBQM/workr/blob/main/R/RunWorkflow.R) to pull data from database.  
+- GitHub Actions - **Future State** {workr}-based actions with custom `lConfig.saveData` and `lConfig.loadData` hooks in [`workr::RunWorkflow`](https://github.com/Gilead-BioStats/workr/blob/main/R/RunWorkflow.R) to pull data from database.  
 - R Shiny App (possibly with WASM)
 - AWS framework (e.g. via lambdas)
 

@@ -28,7 +28,8 @@ expected_skills <- c(
 
 # Tool-specific product names that should NOT appear in skills files (Req 26.8)
 tool_specific_terms <- c(
-  "Copilot", "GitHub Copilot",
+  "Copilot",
+  "GitHub Copilot",
   "Cursor",
   "Kiro",
   "ChatGPT",
@@ -59,17 +60,24 @@ test_that("AGENTS.md contains architecture overview section", {
 
 test_that("AGENTS.md contains component development workflows section", {
   skip_if_not(file.exists(agents_path), "AGENTS.md does not exist yet")
-  content <- tolower(paste(readLines(agents_path, warn = FALSE), collapse = "\n"))
+  content <- tolower(paste(
+    readLines(agents_path, warn = FALSE),
+    collapse = "\n"
+  ))
   # Should cover: adding workflow YAML, modifying front-end, updating Actions, implementing lConfig hook
   expect_true(
-    grepl("development workflow", content) || grepl("component.+workflow", content),
+    grepl("development workflow", content) ||
+      grepl("component.+workflow", content),
     label = "AGENTS.md should contain component development workflows"
   )
 })
 
 test_that("AGENTS.md contains testing instructions section", {
   skip_if_not(file.exists(agents_path), "AGENTS.md does not exist yet")
-  content <- tolower(paste(readLines(agents_path, warn = FALSE), collapse = "\n"))
+  content <- tolower(paste(
+    readLines(agents_path, warn = FALSE),
+    collapse = "\n"
+  ))
   expect_true(
     grepl("testing", content) && grepl("instruction", content),
     label = "AGENTS.md should contain testing instructions"
@@ -78,7 +86,10 @@ test_that("AGENTS.md contains testing instructions section", {
 
 test_that("AGENTS.md contains PR/review workflow section", {
   skip_if_not(file.exists(agents_path), "AGENTS.md does not exist yet")
-  content <- tolower(paste(readLines(agents_path, warn = FALSE), collapse = "\n"))
+  content <- tolower(paste(
+    readLines(agents_path, warn = FALSE),
+    collapse = "\n"
+  ))
   expect_true(
     (grepl("pull request", content) || grepl("\\bpr\\b", content)) &&
       grepl("review", content),
@@ -88,7 +99,10 @@ test_that("AGENTS.md contains PR/review workflow section", {
 
 test_that("AGENTS.md contains interface contracts section", {
   skip_if_not(file.exists(agents_path), "AGENTS.md does not exist yet")
-  content <- tolower(paste(readLines(agents_path, warn = FALSE), collapse = "\n"))
+  content <- tolower(paste(
+    readLines(agents_path, warn = FALSE),
+    collapse = "\n"
+  ))
   expect_true(
     grepl("interface", content) && grepl("contract", content),
     label = "AGENTS.md should contain interface contracts"
@@ -137,8 +151,10 @@ test_that("each skills file contains step-by-step instructions section", {
     skip_if_not(file.exists(fpath), paste0(skill_file, " does not exist yet"))
     content <- tolower(paste(readLines(fpath, warn = FALSE), collapse = "\n"))
     expect_true(
-      grepl("step-by-step", content) || grepl("step.by.step", content) ||
-        grepl("instructions", content) || grepl("## steps", content),
+      grepl("step-by-step", content) ||
+        grepl("step.by.step", content) ||
+        grepl("instructions", content) ||
+        grepl("## steps", content),
       label = paste0(skill_file, " should contain step-by-step instructions")
     )
   }
@@ -165,7 +181,10 @@ test_that("each skills file contains verification criteria section", {
     content <- tolower(paste(readLines(fpath, warn = FALSE), collapse = "\n"))
     expect_true(
       grepl("verification", content) || grepl("verify", content),
-      label = paste0(skill_file, " should contain verification criteria section")
+      label = paste0(
+        skill_file,
+        " should contain verification criteria section"
+      )
     )
   }
 })
@@ -184,7 +203,9 @@ test_that("skills files use tool-agnostic language (no product-specific referenc
       expect_false(
         grepl(term, content, ignore.case = TRUE),
         label = paste0(
-          skill_file, " should not reference '", term,
+          skill_file,
+          " should not reference '",
+          term,
           "' — use generic terms like 'AI assistant' instead"
         )
       )

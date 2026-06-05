@@ -14,7 +14,7 @@
    packages:
      - Gilead-BioStats/gsm.core@v2.2.0
      - Gilead-BioStats/gsm.mapping
-     - OpenRBQM/workr@main
+     - Gilead-BioStats/workr@main
    ```
 
 2. To create a new snapshot branch, trigger the "Init Snapshot" workflow:

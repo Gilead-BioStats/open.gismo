@@ -17,7 +17,15 @@ test_that("gh_SaveData commits output data frames as CSV to GitHub", {
     gh_get_content = function(repo, path, branch, token) {
       list(content = "", sha = "existing_sha")
     },
-    gh_put_content = function(repo, path, content, message, branch, sha, token) {
+    gh_put_content = function(
+      repo,
+      path,
+      content,
+      message,
+      branch,
+      sha,
+      token
+    ) {
       committed_files[[length(committed_files) + 1]] <<- list(
         path = path,
         content = content,
@@ -30,7 +38,10 @@ test_that("gh_SaveData commits output data frames as CSV to GitHub", {
   lWorkflow <- list(
     meta = list(Type = "Metric", ID = "kri0001"),
     lResult = list(
-      Analysis_Input = data.frame(SubjectID = c("S001", "S002"), Rate = c(0.1, 0.2))
+      Analysis_Input = data.frame(
+        SubjectID = c("S001", "S002"),
+        Rate = c(0.1, 0.2)
+      )
     )
   )
 
@@ -53,7 +64,15 @@ test_that("gh_SaveData constructs output path with snapshot_id and phase", {
     gh_get_content = function(repo, path, branch, token) {
       list(content = "", sha = "sha1")
     },
-    gh_put_content = function(repo, path, content, message, branch, sha, token) {
+    gh_put_content = function(
+      repo,
+      path,
+      content,
+      message,
+      branch,
+      sha,
+      token
+    ) {
       captured_paths <<- c(captured_paths, path)
       list(content = list(sha = "sha2"), commit = list(sha = "sha3"))
     }
@@ -88,7 +107,15 @@ test_that("gh_SaveData serializes data frames to valid CSV content", {
     gh_get_content = function(repo, path, branch, token) {
       list(content = "", sha = "sha1")
     },
-    gh_put_content = function(repo, path, content, message, branch, sha, token) {
+    gh_put_content = function(
+      repo,
+      path,
+      content,
+      message,
+      branch,
+      sha,
+      token
+    ) {
       captured_content <<- content
       list(content = list(sha = "sha2"), commit = list(sha = "sha3"))
     }
@@ -129,7 +156,15 @@ test_that("gh_SaveData saves multiple result artifacts", {
     gh_get_content = function(repo, path, branch, token) {
       list(content = "", sha = "sha1")
     },
-    gh_put_content = function(repo, path, content, message, branch, sha, token) {
+    gh_put_content = function(
+      repo,
+      path,
+      content,
+      message,
+      branch,
+      sha,
+      token
+    ) {
       committed_count <<- committed_count + 1
       list(content = list(sha = "sha2"), commit = list(sha = "sha3"))
     }
@@ -162,7 +197,15 @@ test_that("gh_SaveData handles empty lResult gracefully", {
   committed_count <- 0
 
   local_mocked_bindings(
-    gh_put_content = function(repo, path, content, message, branch, sha, token) {
+    gh_put_content = function(
+      repo,
+      path,
+      content,
+      message,
+      branch,
+      sha,
+      token
+    ) {
       committed_count <<- committed_count + 1
       list(content = list(sha = "sha2"), commit = list(sha = "sha3"))
     }
@@ -190,7 +233,15 @@ test_that("gh_SaveData handles NULL lResult gracefully", {
   committed_count <- 0
 
   local_mocked_bindings(
-    gh_put_content = function(repo, path, content, message, branch, sha, token) {
+    gh_put_content = function(
+      repo,
+      path,
+      content,
+      message,
+      branch,
+      sha,
+      token
+    ) {
       committed_count <<- committed_count + 1
       list(content = list(sha = "sha2"), commit = list(sha = "sha3"))
     }
@@ -222,7 +273,15 @@ test_that("gh_SaveData logs error on API failure and retains data", {
     gh_get_content = function(repo, path, branch, token) {
       list(content = "", sha = "sha1")
     },
-    gh_put_content = function(repo, path, content, message, branch, sha, token) {
+    gh_put_content = function(
+      repo,
+      path,
+      content,
+      message,
+      branch,
+      sha,
+      token
+    ) {
       stop(structure(
         list(message = "GitHub API error (500): Internal Server Error"),
         class = c("gh_api_error", "error", "condition")
@@ -262,7 +321,15 @@ test_that("gh_SaveData records execution status", {
       }
       list(content = "", sha = "sha1")
     },
-    gh_put_content = function(repo, path, content, message, branch, sha, token) {
+    gh_put_content = function(
+      repo,
+      path,
+      content,
+      message,
+      branch,
+      sha,
+      token
+    ) {
       if (grepl("status\\.json", path)) {
         status_recorded <<- TRUE
       }
@@ -298,7 +365,15 @@ test_that("gh_SaveData continues saving other artifacts when one fails", {
     gh_get_content = function(repo, path, branch, token) {
       list(content = "", sha = "sha1")
     },
-    gh_put_content = function(repo, path, content, message, branch, sha, token) {
+    gh_put_content = function(
+      repo,
+      path,
+      content,
+      message,
+      branch,
+      sha,
+      token
+    ) {
       if (grepl("Artifact_A", path)) {
         stop(structure(
           list(message = "GitHub API error (500): Internal Server Error"),
