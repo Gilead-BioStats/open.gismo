@@ -33,6 +33,9 @@ site/public/provenance.json
 site/public/output/
 site/public/workflows/
 
+# Built single-file site (vite build output at repo root)
+/index.html
+
 # Dev server logs
 site/dev.log
 site/dev.err.log
