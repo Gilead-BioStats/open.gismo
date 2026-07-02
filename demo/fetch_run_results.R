@@ -71,11 +71,21 @@ if (!is.null(run_id) && dir.exists(run_id)) {
   if (status != 0) {
     stop("gh run download failed (is the artifact still within its retention window?)")
   }
+  triggered_by <- tryCatch(
+    system2(
+      "gh",
+      c("api", sprintf("repos/%s/actions/runs/%s", study_repo, run_id),
+        "-q", ".triggering_actor.login"),
+      stdout = TRUE
+    ),
+    error = function(e) NULL
+  )
   provenance <- list(
     source = "github-actions",
     label = paste0(study_repo, " run #", run_id),
     run_id = run_id,
-    run_url = sprintf("https://github.com/%s/actions/runs/%s", study_repo, run_id)
+    run_url = sprintf("https://github.com/%s/actions/runs/%s", study_repo, run_id),
+    triggered_by = if (length(triggered_by) == 1 && nzchar(triggered_by)) triggered_by else NULL
   )
 }
 

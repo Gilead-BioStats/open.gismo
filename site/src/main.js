@@ -122,10 +122,11 @@ async function renderProvenance() {
     if (!res.ok) return;
     const p = await res.json();
     const when = p.run_time_utc ? ` · ${p.run_time_utc}` : '';
+    const by = p.triggered_by ? ` · by ${p.triggered_by}` : '';
     const label = esc(p.label || p.source || 'unknown');
     el.innerHTML = p.run_url
-      ? `Data: <a href="${esc(p.run_url)}" target="_blank" rel="noopener">${label}</a>${esc(when)}`
-      : `Data: ${label}${esc(when)}`;
+      ? `Data: <a href="${esc(p.run_url)}" target="_blank" rel="noopener">${label}</a>${esc(when)}${esc(by)}`
+      : `Data: ${label}${esc(when)}${esc(by)}`;
   } catch {
     // No provenance.json — leave the badge empty.
   }
