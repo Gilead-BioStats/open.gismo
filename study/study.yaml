@@ -1,0 +1,62 @@
+# Study-specific configuration: data generation + workflow execution.
+# A run must be fully determined by this file plus the committed bundle
+# (manifest.csv, rproject.toml, workflows/) — hence the explicit seed.
+study:
+  id: OPEN-GISMO-DEMO
+  participants: 250
+  sites: 25
+  snapshots: 1            # demo branch: single snapshot loaded via workr's gsm.datasim provider
+  snapshot_width: months
+  start_date: "2025-01-01"
+  end_date: "2025-06-30"
+
+datasim:
+  # Demo branch mode: skip scripts/02-generate-data.R and let RunProject's
+  # project-level LoadData wrapper call workr's built-in `LoadData = "gsm.datasim"`
+  # provider once before the phases run. The provider itself is workflow-scoped,
+  # so the wrapper is what keeps generation single-shot for this project run.
+  mode: load_provider
+  seed: 20260611
+  # Specs are read from the mappings phase only: 0_other holds non-workflow
+  # config yamls that MakeWorkflowList() cannot parse, and metric/reporting
+  # specs reference Mapped_*/Analyzed_* inputs, not Raw_* domains.
+  spec_path: workflows/1_mappings
+  # desired_domains: null  -> generate every Raw_* domain found in the spec
+  desired_domains: null
+  domain_counts:
+    Raw_AE: 800
+    Raw_LB: 1200
+  provider:
+    profile: standard
+    study_type: standard
+    snapshot_count: 1
+
+run:
+  workflow_path: workflows
+  # Must match immediate subdirectories of workflows/ in the pulled snapshot.
+  # 0_other (config specs) and 4_modules (app modules) are excluded from
+  # execution; trim this list to debug a single phase.
+  phases:
+    - 1_mappings
+    - 2_metrics
+    - 3_reporting
+  # Demo branch: keep the LoadData proof focused on the standard gsm.datasim
+  # domains. The built-in standard provider does not generate Raw_AntiCancer
+  # or Raw_Baseline, and endpoint/consent workflows are private/grail-backed
+  # paths outside this demo's scope.
+  exclude_workflows:
+    - AntiCancer.yaml
+    - Baseline.yaml
+    - Consents.yaml
+    - Endpoints_Flags.yaml
+    - Endpoints_FlagSpecs.yaml
+    - Endpoints_Missing.yaml
+    - Endpoints_Response.yaml
+    - Endpoints_StudyWindow.yaml
+    - Endpoints_Summary.yaml
+    - end0001.yaml
+    - end0002.yaml
+    - endGroups.yaml
+    - endMetrics.yaml
+  expected_failures: []
+  output_dir: data/output

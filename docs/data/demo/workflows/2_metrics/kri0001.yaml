@@ -27,10 +27,26 @@ steps:
     params:
       dfSubjects: Raw_DM
       dfNumerator: Mapped_AE
+      dfDenominator: Raw_DM
       strSubjectCol: SubjectID
       strGroupCol: SiteID
       strGroupLevel: GroupLevel
+      strDenominatorMethod: Sum
+      strDenominatorCol: DaysOnStudy
+  - output: Analysis_Transformed
+    name: gsm.core::Transform_Rate
+    params:
+      dfInput: Analysis_Input
+  - output: Analysis_Analyzed
+    name: gsm.core::Analyze_NormalApprox
+    params:
+      dfTransformed: Analysis_Transformed
+      strType: rate
+  - output: Analysis_Flagged
+    name: gsm.core::Flag
+    params:
+      dfAnalyzed: Analysis_Analyzed
   - output: Analysis_Summary
     name: gsm.core::Summarize
     params:
-      dfFlagged: Analysis_Input
+      dfFlagged: Analysis_Flagged

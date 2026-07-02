@@ -27,9 +27,12 @@ Suggests:
     testthat (>= 3.0.0),
     hedgehog,
     workr,
+    gsm.datasim,
+    shiny,
     yaml
 Remotes:
-    workr=Gilead-BioStats/workr@main
+    workr=Gilead-BioStats/workr@main,
+    gsm.datasim=Gilead-BioStats/gsm.datasim@main
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

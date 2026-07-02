@@ -13,3 +13,5 @@
 ^docs$
 ^[.]?air[.]toml$
 ^\.vscode$
+^study$
+^demo$

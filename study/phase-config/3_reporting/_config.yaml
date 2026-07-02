@@ -1,0 +1,11 @@
+# Study-owned phase-boundary config, injected into the staged run directory
+# by prepare_run_path(). The snapshot bundle ships no _config.yaml files, so
+# the phase handoff the reporting workflows assume (lWorkflows, lAnalyzed)
+# has to be declared here (GAPS.md #10).
+input:
+  # Metrics.yaml: gsm.reporting::MakeMetric(lWorkflows = <metric workflows>)
+  include_workflows:
+    from_phase: 2_metrics
+  # Results.yaml: gsm.reporting::BindResults(lAnalysis = lAnalyzed, ...)
+  from_results:
+    lAnalyzed: 2_metrics

@@ -382,3 +382,54 @@ body {
 .dt-pg-btn:hover:not(:disabled) { border-color: var(--accent-blue); color: var(--accent-blue); }
 .dt-pg-btn:disabled { opacity: 0.3; cursor: default; }
 .dt-page-num { font-size: 0.78rem; color: var(--text-dim); padding: 0 0.5rem; }
+
+/* ── Runs tab (GitHub Actions runner) ─────────────────────────────────── */
+.runner-panel { max-width: 900px; margin: 0 auto; padding: 1rem; }
+.runner-settings {
+  display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: end;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 1rem; margin-bottom: 1rem;
+}
+.runner-settings label {
+  display: flex; flex-direction: column; gap: 0.25rem;
+  font-size: 0.75rem; color: var(--text-dim);
+}
+.runner-settings input {
+  background: var(--bg); border: 1px solid var(--border); color: var(--text);
+  border-radius: 4px; padding: 0.35rem 0.5rem; font-size: 0.8rem; min-width: 180px;
+}
+.runner-go { border-color: var(--accent-green, #34d399); color: var(--accent-green, #34d399); }
+.runner-msg { font-size: 0.78rem; color: var(--text-dim); align-self: center; }
+.runner-runs { display: flex; flex-direction: column; gap: 0.4rem; }
+.run-row {
+  display: flex; align-items: center; gap: 0.75rem;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 0.5rem 0.75rem; font-size: 0.82rem;
+}
+.run-badge {
+  font-size: 0.7rem; padding: 0.1rem 0.5rem; border-radius: 999px;
+  border: 1px solid currentColor; text-transform: uppercase; letter-spacing: 0.03em;
+}
+.run-success { color: #34d399; }
+.run-failure { color: #f87171; }
+.run-active { color: #60a5fa; animation: pulse 1.5s ease-in-out infinite; }
+.run-neutral { color: var(--text-dim); }
+@keyframes pulse { 50% { opacity: 0.45; } }
+.run-link { color: var(--accent-blue, #60a5fa); text-decoration: none; font-weight: 600; }
+.run-meta { color: var(--text-dim); flex: 1; }
+.run-steps-btn {
+  background: none; border: 1px solid var(--border); color: var(--text-dim);
+  border-radius: 4px; padding: 0.15rem 0.5rem; font-size: 0.72rem; cursor: pointer;
+}
+.run-steps-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+.run-ingest {
+  font-size: 0.68rem; color: var(--text-dim); background: var(--bg);
+  padding: 0.15rem 0.4rem; border-radius: 4px;
+}
+.run-steps { padding: 0.25rem 1rem 0.5rem; display: flex; flex-direction: column; gap: 0.25rem; }
+.run-step { font-size: 0.78rem; color: var(--text); display: flex; gap: 0.5rem; align-items: center; }
+
+/* ── Data provenance badge ────────────────────────────────────────────── */
+.provenance { font-size: 0.75rem; color: var(--text-dim); white-space: nowrap; }
+.provenance a { color: var(--accent-blue, #60a5fa); text-decoration: none; }
+.provenance a:hover { text-decoration: underline; }

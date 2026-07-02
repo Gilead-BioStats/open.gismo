@@ -1,0 +1,24 @@
+[project]
+name = "open-gismo-demo-study"
+r_version = "4.4"
+
+repositories = [
+    {alias = "PPM", url = "https://packagemanager.posit.co/cran/latest"}
+]
+
+# Public-only subset of the gismo.library snapshot pins (same commit SHAs as
+# manifest.csv). The private packages (gsm.endpoints, grail, grail.ado,
+# gsm.rrm, gsm.template) and the workflows that need them are intentionally
+# excluded so this demo runs without an org PAT.
+dependencies = [
+    { name = "gsm.core", git = "https://github.com/Gilead-BioStats/gsm.core.git", commit = "b18a79d1f9a53c416d2f9bd9d9bed6c11c8b0c73" },
+    { name = "gsm.mapping", git = "https://github.com/Gilead-BioStats/gsm.mapping.git", commit = "9ea4f6050acec525b3165d740dc28bd82d70a309" },
+    { name = "gsm.kri", git = "https://github.com/Gilead-BioStats/gsm.kri.git", commit = "d380a4ad5bdfcf47750414361498533e0f78bb77" },
+    { name = "gsm.qtl", git = "https://github.com/Gilead-BioStats/gsm.qtl.git", commit = "02b3f1366be9411c7e637b165b7a1a7d8fa17f47" },
+    { name = "gsm.reporting", git = "https://github.com/Gilead-BioStats/gsm.reporting.git", commit = "2a54a4b3a040891787976af3ccaac4993342f9db" },
+    { name = "gsm.app", git = "https://github.com/Gilead-BioStats/gsm.app.git", commit = "b4ef087642b23e9ab2ea6585717db352a602ee95" },
+    { name = "gsm.datasim", git = "https://github.com/Gilead-BioStats/gsm.datasim.git", commit = "20274efb3a214b402d9c369f20adb8f2b78ddd51" },
+    { name = "gsm.qc", git = "https://github.com/Gilead-BioStats/gsm.qc.git", commit = "99dac311d110633bc0ae244b4c48f8fbe56771cc" },
+    { name = "gsm.utils", git = "https://github.com/Gilead-BioStats/gsm.utils.git", commit = "197037651dea489125ac072a399cc9c16e5da34b" },
+    { name = "workr", git = "https://github.com/Gilead-BioStats/workr.git", commit = "e8b2d849bf7195de20b944baff4c3587a0b56463" }
+]

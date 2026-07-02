@@ -7,16 +7,23 @@ import { setFilter, applyFilters, resetFilters } from './filters.js';
 import { buildDetailView } from './detail.js';
 import { parseYamlMeta } from './parsers.js';
 import { buildExplorer, selectArtifact } from './explorer.js';
+import { buildRunnerPanel } from './runner.js';
 
 let currentPhases = null;
 let compactMode = false;
 let currentStatus = null;
 let currentLog = null;
+let runnerInitialized = false;
 
 function showTab(name) {
   document.getElementById('workflowsTab').style.display = name === 'workflows' ? '' : 'none';
   document.getElementById('explorerTab').style.display = name === 'explorer' ? '' : 'none';
   document.getElementById('packagesTab').style.display = name === 'packages' ? '' : 'none';
+  document.getElementById('runsTab').style.display = name === 'runs' ? '' : 'none';
+  if (name === 'runs' && !runnerInitialized) {
+    runnerInitialized = true;
+    document.getElementById('runsTab').appendChild(buildRunnerPanel());
+  }
   document.querySelectorAll('.tab-btn').forEach(b => {
     const active = b.dataset.tab === name;
     b.classList.toggle('active', active);
@@ -108,9 +115,27 @@ function closeDetail() {
   document.body.style.overflow = '';
 }
 
+async function renderProvenance() {
+  const el = document.getElementById('provenance');
+  try {
+    const res = await fetch('provenance.json');
+    if (!res.ok) return;
+    const p = await res.json();
+    const when = p.run_time_utc ? ` · ${p.run_time_utc}` : '';
+    const by = p.triggered_by ? ` · by ${p.triggered_by}` : '';
+    const label = esc(p.label || p.source || 'unknown');
+    el.innerHTML = p.run_url
+      ? `Data: <a href="${esc(p.run_url)}" target="_blank" rel="noopener">${label}</a>${esc(when)}${esc(by)}`
+      : `Data: ${label}${esc(when)}${esc(by)}`;
+  } catch {
+    // No provenance.json — leave the badge empty.
+  }
+}
+
 async function init() {
   const wTab = document.getElementById('workflowsTab');
   const pTab = document.getElementById('packagesTab');
+  renderProvenance();
 
   try {
     // Load workflows, status, log, and packages in parallel

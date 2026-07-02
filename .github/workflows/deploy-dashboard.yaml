@@ -1,0 +1,82 @@
+name: Deploy Dashboard
+
+# Publishes the workflow-explorer dashboard to GitHub Pages, hydrated with
+# the latest successful Run Study artifact — the same ingestion that
+# demo/fetch_run_results.R does locally, just executed in CI. Runs
+# automatically after each successful Run Study, or on demand.
+#
+# Requires: repo Settings → Pages → Source = "GitHub Actions".
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Run Study"]
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read      # gh run download of the study-output artifact
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    # For workflow_run triggers, only deploy after a successful study run.
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GISMO_STUDY_REPO: ${{ github.repository }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.4'
+          use-public-rspm: true
+
+      - name: Install R dependencies
+        run: Rscript -e 'install.packages(c("yaml", "jsonlite"))'
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Ingest latest successful study run
+        run: Rscript demo/fetch_run_results.R
+
+      - name: Build site
+        run: |
+          cd site
+          npm ci
+          npm run build
+
+      - name: Assemble Pages payload
+        run: |
+          mkdir -p _site
+          cp index.html _site/
+          cp site/public/_index.json site/public/status.json _site/
+          cp site/public/manifest.csv _site/ 2>/dev/null || true
+          cp site/public/provenance.json _site/ 2>/dev/null || true
+          cp -r site/public/workflows _site/
+          cp -r site/public/output _site/
+          touch _site/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
