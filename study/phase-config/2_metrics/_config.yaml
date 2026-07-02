@@ -1,0 +1,5 @@
+# srs0001.yaml calls gsm.reporting::MakeMetric(lWorkflows = lWorkflows)
+# mid-phase, so the current phase's workflow list must be in lData
+# (GAPS.md 10 — the bundle declares none of its _config.yaml needs).
+input:
+  include_workflows: true

@@ -7,16 +7,23 @@ import { setFilter, applyFilters, resetFilters } from './filters.js';
 import { buildDetailView } from './detail.js';
 import { parseYamlMeta } from './parsers.js';
 import { buildExplorer, selectArtifact } from './explorer.js';
+import { buildRunnerPanel } from './runner.js';
 
 let currentPhases = null;
 let compactMode = false;
 let currentStatus = null;
 let currentLog = null;
+let runnerInitialized = false;
 
 function showTab(name) {
   document.getElementById('workflowsTab').style.display = name === 'workflows' ? '' : 'none';
   document.getElementById('explorerTab').style.display = name === 'explorer' ? '' : 'none';
   document.getElementById('packagesTab').style.display = name === 'packages' ? '' : 'none';
+  document.getElementById('runsTab').style.display = name === 'runs' ? '' : 'none';
+  if (name === 'runs' && !runnerInitialized) {
+    runnerInitialized = true;
+    document.getElementById('runsTab').appendChild(buildRunnerPanel());
+  }
   document.querySelectorAll('.tab-btn').forEach(b => {
     const active = b.dataset.tab === name;
     b.classList.toggle('active', active);

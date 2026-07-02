@@ -19,3 +19,19 @@ Thumbs.db
 .vscode/
 .idea/
 .positai/
+
+# Study run outputs (created by study/scripts/*.R)
+study/data/
+
+# Generated site data — never committed. Produced from a study run (CI
+# artifact or local) by demo/fetch_run_results.R; GitHub Artifacts are the
+# interim layer between the pipeline and the dashboard.
+site/public/_index.json
+site/public/status.json
+site/public/manifest.csv
+site/public/output/
+site/public/workflows/
+
+# Dev server logs
+site/dev.log
+site/dev.err.log

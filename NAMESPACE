@@ -2,6 +2,10 @@
 
 export(build_status_json)
 export(create_project_snapshot)
+export(datasim_LoadData)
+export(datasim_SaveData)
+export(datasim_lConfig)
+export(display_activation_status)
 export(get_snapshot_status)
 export(gh_LoadData)
 export(gh_SaveData)
