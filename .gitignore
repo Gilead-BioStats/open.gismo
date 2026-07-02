@@ -29,6 +29,7 @@ study/data/
 site/public/_index.json
 site/public/status.json
 site/public/manifest.csv
+site/public/provenance.json
 site/public/output/
 site/public/workflows/
 

@@ -23,7 +23,10 @@
 #   Rscript demo/fetch_run_results.R 12345678901  # specific run id
 # Then: cd site && npm run dev
 
-study_repo <- "Gilead-BioStats/open.gismo"
+`%||%` <- function(x, y) if (is.null(x)) y else x
+
+# Override with e.g. GISMO_STUDY_REPO=zdz2101/open.gismo to pull from a fork.
+study_repo <- Sys.getenv("GISMO_STUDY_REPO", "Gilead-BioStats/open.gismo")
 study_dir <- "study"
 site_public <- "site/public"
 
@@ -35,10 +38,12 @@ if (!dir.exists(site_public)) {
 }
 
 # -- 1. Resolve the output directory (local run or CI artifact) --------------
+provenance <- list(source = "github-actions")
 if (!is.null(run_id) && dir.exists(run_id)) {
   # A directory argument (e.g. study/data/output from a local
   # `Rscript scripts/03-run-workflows.R`) is ingested directly — no download.
   artifact_dir <- run_id
+  provenance <- list(source = "local-run", label = artifact_dir)
   cat("Using local output directory:", artifact_dir, "\n")
 } else {
   if (is.null(run_id)) {
@@ -64,6 +69,12 @@ if (!is.null(run_id) && dir.exists(run_id)) {
   if (status != 0) {
     stop("gh run download failed (is the artifact still within its retention window?)")
   }
+  provenance <- list(
+    source = "github-actions",
+    label = paste0(study_repo, " run #", run_id),
+    run_id = run_id,
+    run_url = sprintf("https://github.com/%s/actions/runs/%s", study_repo, run_id)
+  )
 }
 
 rds_path <- file.path(artifact_dir, "workr-results.rds")
@@ -157,7 +168,20 @@ if (dir.exists(workflows_src)) {
   warning("Vendored bundle '", workflows_src, "' not found; skipping workflow YAML copy.")
 }
 
-# -- 4. Regenerate _index.json and status.json ------------------------------
+# -- 4. Write data provenance for the dashboard header ----------------------
+meta_path <- file.path(artifact_dir, "run-metadata.yaml")
+if (file.exists(meta_path) && requireNamespace("yaml", quietly = TRUE)) {
+  meta <- yaml::read_yaml(meta_path)
+  provenance$run_time_utc <- meta$run_time_utc
+  provenance$study_id <- meta$study_config$study$id
+}
+writeLines(
+  jsonlite::toJSON(provenance, auto_unbox = TRUE, pretty = TRUE),
+  file.path(site_public, "provenance.json")
+)
+cat("Wrote provenance.json:", provenance$label %||% provenance$source, "\n")
+
+# -- 5. Regenerate _index.json and status.json ------------------------------
 cat("Generating _index.json and status.json...\n")
 old_wd <- setwd("site")
 status <- tryCatch(

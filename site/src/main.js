@@ -115,9 +115,26 @@ function closeDetail() {
   document.body.style.overflow = '';
 }
 
+async function renderProvenance() {
+  const el = document.getElementById('provenance');
+  try {
+    const res = await fetch('provenance.json');
+    if (!res.ok) return;
+    const p = await res.json();
+    const when = p.run_time_utc ? ` · ${p.run_time_utc}` : '';
+    const label = esc(p.label || p.source || 'unknown');
+    el.innerHTML = p.run_url
+      ? `Data: <a href="${esc(p.run_url)}" target="_blank" rel="noopener">${label}</a>${esc(when)}`
+      : `Data: ${label}${esc(when)}`;
+  } catch {
+    // No provenance.json — leave the badge empty.
+  }
+}
+
 async function init() {
   const wTab = document.getElementById('workflowsTab');
   const pTab = document.getElementById('packagesTab');
+  renderProvenance();
 
   try {
     // Load workflows, status, log, and packages in parallel

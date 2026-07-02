@@ -428,3 +428,8 @@ body {
 }
 .run-steps { padding: 0.25rem 1rem 0.5rem; display: flex; flex-direction: column; gap: 0.25rem; }
 .run-step { font-size: 0.78rem; color: var(--text); display: flex; gap: 0.5rem; align-items: center; }
+
+/* ── Data provenance badge ────────────────────────────────────────────── */
+.provenance { font-size: 0.75rem; color: var(--text-dim); white-space: nowrap; }
+.provenance a { color: var(--accent-blue, #60a5fa); text-decoration: none; }
+.provenance a:hover { text-decoration: underline; }
