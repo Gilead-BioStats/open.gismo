@@ -36,11 +36,13 @@ export function saveRunnerConfig(cfg) {
 }
 
 function api(cfg, path, options = {}) {
+  // Reads on public repos work unauthenticated (60 req/hr per IP), so only
+  // attach auth when a token is configured. Dispatch always needs one.
   return fetch(`https://api.github.com${path}`, {
     ...options,
     headers: {
       Accept: 'application/vnd.github+json',
-      Authorization: `Bearer ${cfg.token}`,
+      ...(cfg.token ? { Authorization: `Bearer ${cfg.token}` } : {}),
       'X-GitHub-Api-Version': '2022-11-28',
       ...(options.headers || {}),
     },
@@ -112,7 +114,7 @@ function renderSettings(cfg) {
       <label>Repo <input id="runnerRepo" value="${esc(cfg.repo)}"></label>
       <label>Workflow <input id="runnerWorkflow" value="${esc(cfg.workflow)}"></label>
       <label>Branch <input id="runnerBranch" value="${esc(cfg.branch)}"></label>
-      <label>Token <input id="runnerToken" type="password" placeholder="ghp_… (actions read/write)" value="${esc(cfg.token)}"></label>
+      <label>Token <input id="runnerToken" type="password" placeholder="only needed to trigger runs" value="${esc(cfg.token)}"></label>
       <button id="runnerSave" class="toggle-btn">Save</button>
       <button id="runnerDispatch" class="toggle-btn runner-go">▶ Run Study</button>
       <span id="runnerMsg" class="runner-msg"></span>
@@ -143,10 +145,6 @@ export function buildRunnerPanel() {
   async function refresh() {
     const cfg = getRunnerConfig();
     const list = el.querySelector('#runnerRuns');
-    if (!cfg.token) {
-      list.innerHTML = '<div class="loading">Enter a GitHub token above to list and trigger runs.</div>';
-      return;
-    }
     try {
       const runs = await listRuns(cfg);
       list.innerHTML = runs.length
@@ -155,7 +153,10 @@ export function buildRunnerPanel() {
       clearTimeout(pollTimer);
       if (hasActiveRun(runs)) pollTimer = setTimeout(refresh, POLL_MS);
     } catch (err) {
-      list.innerHTML = `<div class="error-msg">${esc(err.message)}</div>`;
+      const hint = cfg.token
+        ? ''
+        : ' (private repo or rate limit — add a token above)';
+      list.innerHTML = `<div class="error-msg">${esc(err.message + hint)}</div>`;
     }
   }
 
@@ -171,6 +172,10 @@ export function buildRunnerPanel() {
     } else if (e.target.id === 'runnerDispatch') {
       const cfg = readForm();
       saveRunnerConfig(cfg);
+      if (!cfg.token) {
+        msg('A token is required to trigger runs (viewing works without one).');
+        return;
+      }
       msg('Dispatching…');
       try {
         await dispatchRun(cfg);
