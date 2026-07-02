@@ -47,10 +47,12 @@ if (!is.null(run_id) && dir.exists(run_id)) {
   cat("Using local output directory:", artifact_dir, "\n")
 } else {
   if (is.null(run_id)) {
+    # shQuote: system2 doesn't quote args on unix, so the space in the
+    # workflow name would otherwise split into a bogus extra argument.
     run_id <- system2(
       "gh",
-      c("run", "list", "-R", study_repo, "-w", "Run Study",
-        "-s", "success", "-L", "1", "--json", "databaseId", "-q", ".[0].databaseId"),
+      c("run", "list", "-R", study_repo, "-w", shQuote("Run Study"),
+        "-s", "success", "-L", "1", "--json", "databaseId", "-q", shQuote(".[0].databaseId")),
       stdout = TRUE
     )
     if (length(run_id) == 0 || !nzchar(run_id)) {
